@@ -1,0 +1,638 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "firstName": "מנהל",
+      "lastName": "ראשי",
+      "email": "admin@example.com",
+      "password": "Admin123!",
+      "isAdmin": true,
+      "phone": "050-1234567",
+      "address": "תל אביב"
+    },
+    {
+      "id": 2,
+      "firstName": "יוסי",
+      "lastName": "כהן",
+      "email": "yossi@example.com",
+      "password": "User123!",
+      "isAdmin": false,
+      "phone": "052-9876543",
+      "address": "ירושלים"
+    },
+    {
+      "id": 3,
+      "firstName": "shira",
+      "lastName": "merenstein",
+      "email": "shirameren2434@gmail.com",
+      "password": "Shira12!",
+      "phone": "0552726827",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    },
+    {
+      "id": 4,
+      "firstName": "חן",
+      "lastName": "מטאטוב",
+      "email": "chen@gmail.com",
+      "password": "Ch12345678!",
+      "phone": "0552726823",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    },
+    {
+      "id": 5,
+      "firstName": "נועה ",
+      "lastName": "מצגר",
+      "email": "noa@gmail.com",
+      "password": "Nm12345678!",
+      "phone": "0552726827",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    },
+    {
+      "id": 6,
+      "firstName": "מלי",
+      "lastName": "מרנשטיין",
+      "email": "malimeren@office.eduil.org",
+      "password": "12345678Mm!",
+      "phone": "0552726827",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    },
+    {
+      "id": 7,
+      "firstName": "מלי",
+      "lastName": "מרנשטיין",
+      "email": "malimeren2434@gmail.com",
+      "password": "12345678Mm!",
+      "phone": "0552726827",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    },
+    {
+      "id": 8,
+      "firstName": "רחל",
+      "lastName": "קינסבורסקי",
+      "email": "rachel2434@gmail.com",
+      "password": "!Rachel2434",
+      "phone": "0552726826",
+      "address": "דרכי איש 11,ביתר",
+      "isAdmin": false
+    },
+    {
+      "id": 9,
+      "firstName": "shira",
+      "lastName": "merenstein",
+      "email": "shirameren34@gmail.com",
+      "password": "Rr12345678!",
+      "phone": "0552726827",
+      "address": "26 Revivim Street",
+      "isAdmin": false
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "מחשב נייד Dell",
+      "category": "מחשבים",
+      "price": 3500,
+      "description": "מחשב נייד מתקדם לעבודה ולימודים",
+      "image": "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=300&h=200&fit=crop",
+      "stock": 10,
+      "sold": 16
+    },
+    {
+      "id": 3,
+      "name": "אוזניות Bluetooth",
+      "category": "אביזרים",
+      "price": 250,
+      "description": "אוזניות אלחוטיות איכותיות",
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop",
+      "stock": 25,
+      "sold": 10
+    },
+    {
+      "id": 4,
+      "name": "מקלדת גיימינג",
+      "category": "אביזרים",
+      "price": 450,
+      "description": "מקלדת מכנית עם תאורה RGB",
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300&h=200&fit=crop",
+      "stock": 20,
+      "sold": 12
+    },
+    {
+      "id": 5,
+      "name": "עכבר אלחוטי",
+      "category": "אביזרים",
+      "price": 180,
+      "description": "עכבר אלחוטי מדויק לעבודה",
+      "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=200&fit=crop",
+      "stock": 30,
+      "sold": 5
+    },
+    {
+      "id": 6,
+      "name": "מסך 24 אינץ'",
+      "category": "מחשבים",
+      "price": 1200,
+      "description": "מסך Full HD איכותי",
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&h=200&fit=crop",
+      "stock": 12,
+      "sold": 18
+    },
+    {
+      "id": 7,
+      "name": "טאבלט Samsung",
+      "category": "טלפונים",
+      "price": 2800,
+      "description": "טאבלט מתקדם עם עט דיגיטלי",
+      "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=200&fit=crop",
+      "stock": 8,
+      "sold": 1
+    },
+    {
+      "id": 8,
+      "name": "רמקולים Bluetooth",
+      "category": "אביזרים",
+      "price": 320,
+      "description": "רמקולים אלחוטיים עם בס עמוק",
+      "image": "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=300&h=200&fit=crop",
+      "stock": 18
+    },
+    {
+      "id": 9,
+      "name": "מחשב נייד MacBook Pro",
+      "category": "מחשבים",
+      "price": 8500,
+      "description": "מחשב נייד Apple עם שבב M2 Pro",
+      "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=200&fit=crop",
+      "stock": 5
+    },
+    {
+      "id": 10,
+      "name": "שעון חכם Apple Watch",
+      "category": "אביזרים",
+      "price": 1800,
+      "description": "שעון חכם עם מעקב בריאות מתקדם",
+      "image": "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=300&h=200&fit=crop",
+      "stock": 15
+    },
+    {
+      "id": 11,
+      "name": "מצלמה דיגיטלית Canon",
+      "category": "אביזרים",
+      "price": 3200,
+      "description": "מצלמה DSLR מקצועית לצילום",
+      "image": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=300&h=200&fit=crop",
+      "stock": 7,
+      "sold": 1
+    },
+    {
+      "id": 12,
+      "name": "נייד Samsung Galaxy",
+      "category": "טלפונים",
+      "price": 3800,
+      "description": "טלפון Android מתקדם עם מצלמה 108MP",
+      "image": "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?w=300&h=200&fit=crop",
+      "stock": 22
+    },
+    {
+      "id": 13,
+      "name": "מטען אלחוטי מהיר",
+      "category": "אביזרים",
+      "price": 150,
+      "description": "מטען אלחוטי 15W תואם לכל הטלפונים",
+      "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop",
+      "stock": 40
+    },
+    {
+      "id": 14,
+      "name": "כונן SSD חיצוני",
+      "category": "מחשבים",
+      "price": 680,
+      "description": "כונן SSD נייד 1TB מהירות גבוהה",
+      "image": "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=300&h=200&fit=crop",
+      "stock": 25
+    },
+    {
+      "id": 15,
+      "name": "מסך גיימינג 27 אינץ'",
+      "category": "מחשבים",
+      "price": 1800,
+      "description": "מסך גיימינג 144Hz עם זמן תגובה נמוך",
+      "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=300&h=200&fit=crop",
+      "stock": 10
+    },
+    {
+      "id": 16,
+      "name": "מקלדת מכנית RGB",
+      "category": "אביזרים",
+      "price": 380,
+      "description": "מקלדת מכנית עם תאורת RGB מתקדמת",
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300&h=200&fit=crop",
+      "stock": 15
+    },
+    {
+      "id": 17,
+      "name": "אוזניות גיימינג",
+      "category": "אביזרים",
+      "price": 280,
+      "description": "אוזניות גיימינג עם מיקרופון מובנה",
+      "image": "https://images.unsplash.com/photo-1599669454699-248893623440?w=300&h=200&fit=crop",
+      "stock": 20
+    },
+    {
+      "id": 18,
+      "name": "כרטיס גרפי RTX",
+      "category": "מחשבים",
+      "price": 2500,
+      "description": "כרטיס גרפי מתקדם לגיימינג ועיבוד גרפי",
+      "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=300&h=200&fit=crop",
+      "stock": 8
+    },
+    {
+      "id": 19,
+      "name": "זיכרון RAM 32GB",
+      "category": "מחשבים",
+      "price": 850,
+      "description": "זיכרון RAM DDR4 32GB למחשבים מתקדמים",
+      "image": "https://images.unsplash.com/photo-1562976540-1502c2145186?w=300&h=200&fit=crop",
+      "stock": 12
+    },
+    {
+      "id": 20,
+      "name": "מעבד Intel i9",
+      "category": "מחשבים",
+      "price": 1900,
+      "description": "מעבד Intel Core i9 דור 12 מתקדם",
+      "image": "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=300&h=200&fit=crop",
+      "stock": 6
+    },
+    {
+      "id": 21,
+      "name": "טאבלט iPad Pro",
+      "category": "טאבלטים",
+      "price": 4500,
+      "description": "טאבלט Apple מתקדם עם מעבד M2",
+      "image": "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=300&h=200&fit=crop",
+      "stock": 12
+    },
+    {
+      "id": 22,
+      "name": "מחשב נייד HP",
+      "category": "מחשבים",
+      "price": 2800,
+      "description": "מחשב נייד לעבודה ולימודים",
+      "image": "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=300&h=200&fit=crop",
+      "stock": 18
+    },
+    {
+      "id": 23,
+      "name": "טלפון Xiaomi",
+      "category": "טלפונים",
+      "price": 1200,
+      "description": "טלפון חכם במחיר משתלם",
+      "image": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300&h=200&fit=crop",
+      "stock": 25,
+      "sold": 1
+    },
+    {
+      "id": 25,
+      "name": "שעון חכם Samsung",
+      "category": "אביזרים",
+      "price": 950,
+      "description": "שעון חכם עם מעקב בריאות",
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop",
+      "stock": 20
+    },
+    {
+      "id": 26,
+      "name": "קונסולת גיימינג PS5",
+      "category": "גיימינג",
+      "price": 2200,
+      "description": "קונסולת גיימינג מתקדמת",
+      "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=200&fit=crop",
+      "stock": 5
+    },
+    {
+      "id": 27,
+      "name": "טאבלט Samsung Galaxy",
+      "category": "טאבלטים",
+      "price": 1800,
+      "description": "טאבלט Android מתקדם",
+      "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=200&fit=crop",
+      "stock": 15
+    },
+    {
+      "id": 28,
+      "name": "מצלמה אינסטנט Fujifilm",
+      "category": "צילום",
+      "price": 450,
+      "description": "מצלמה לצילום מיידי",
+      "image": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=200&fit=crop",
+      "stock": 30
+    },
+    {
+      "id": 29,
+      "name": "דרון צילום DJI",
+      "category": "צילום",
+      "price": 3200,
+      "description": "דרון מתקדם לצילום אווירי",
+      "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=300&h=200&fit=crop",
+      "stock": 7
+    },
+    {
+      "id": 30,
+      "name": "בית חכם Amazon Echo",
+      "category": "בית חכם",
+      "price": 380,
+      "description": "רמקול חכם עם עוזר קולי",
+      "image": "https://images.unsplash.com/photo-1543512214-318c7553f230?w=300&h=200&fit=crop",
+      "stock": 22
+    },
+    {
+      "id": 31,
+      "name": "מחשב נייד Lenovo ThinkPad",
+      "category": "מחשבים",
+      "price": 4200,
+      "description": "מחשב עסקי מתקדם עם אבטחה גבוהה",
+      "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300&h=200&fit=crop",
+      "stock": 14
+    },
+    {
+      "id": 32,
+      "name": "טלפון Google Pixel",
+      "category": "טלפונים",
+      "price": 3200,
+      "description": "טלפון Android טהור עם מצלמה משוכללת",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=200&fit=crop",
+      "stock": 18
+    },
+    {
+      "id": 33,
+      "name": "מחשב שולחני ASUS",
+      "category": "מחשבים",
+      "price": 5500,
+      "description": "מחשב גיימינג עוצמתי עם כרטיס גרפי",
+      "image": "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=300&h=200&fit=crop",
+      "stock": 9
+    },
+    {
+      "id": 34,
+      "name": "טלפון OnePlus",
+      "category": "טלפונים",
+      "price": 2800,
+      "description": "טלפון מהיר עם טעינה מהירה",
+      "image": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300&h=200&fit=crop",
+      "stock": 16
+    },
+    {
+      "id": 35,
+      "name": "מחשב נייד Acer",
+      "category": "מחשבים",
+      "price": 2200,
+      "description": "מחשב נייד קל וזול לשימוש יומיומי",
+      "image": "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=300&h=200&fit=crop",
+      "stock": 21
+    },
+    {
+      "id": 36,
+      "name": "טלפון Huawei",
+      "category": "טלפונים",
+      "price": 1800,
+      "description": "טלפון עם מצלמה מתקדמת",
+      "image": "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?w=300&h=200&fit=crop",
+      "stock": 19
+    },
+    {
+      "id": 38,
+      "name": "טלפון Nokia",
+      "category": "טלפונים",
+      "price": 850,
+      "description": "טלפון חזק ואמין עם סוללה ארוכה",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=200&fit=crop",
+      "stock": 28
+    },
+    {
+      "id": 39,
+      "name": "מחשב שולחני HP",
+      "category": "מחשבים",
+      "price": 3200,
+      "description": "מחשב שולחני משפחתי עם מסך גדול",
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&h=200&fit=crop",
+      "stock": 11
+    },
+    {
+      "id": 40,
+      "name": "טלפון Sony Xperia",
+      "category": "טלפונים",
+      "price": 2400,
+      "description": "טלפון עם מסך 4K ומצלמה מקצועית",
+      "image": "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=300&h=200&fit=crop",
+      "stock": 13
+    },
+    {
+      "id": 43,
+      "name": "מצלמת וידאו GoPro",
+      "category": "צילום",
+      "price": 1800,
+      "description": "מצלמת פעולה עמידה במים 4K",
+      "image": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop",
+      "stock": 16
+    },
+    {
+      "id": 44,
+      "name": "טאבלט Microsoft Surface",
+      "category": "טאבלטים",
+      "price": 3200,
+      "description": "טאבלט 2-ב-1 עם Windows 11",
+      "image": "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=300&h=200&fit=crop",
+      "stock": 9
+    },
+    {
+      "id": 45,
+      "name": "קונסולת Xbox Series X",
+      "category": "גיימינג",
+      "price": 2400,
+      "description": "קונסולת גיימינג עם 4K ו-120fps",
+      "image": "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=300&h=200&fit=crop",
+      "stock": 7
+    },
+    {
+      "id": 46,
+      "name": "רמקול חכם Google Nest",
+      "category": "בית חכם",
+      "price": 450,
+      "description": "רמקול חכם עם Google Assistant",
+      "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=200&fit=crop",
+      "stock": 18
+    },
+    {
+      "id": 47,
+      "name": "מחשב Mac Mini",
+      "category": "מחשבים",
+      "price": 2800,
+      "description": "מחשב שולחני קומפקטי עם שבב M2",
+      "image": "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=300&h=200&fit=crop",
+      "stock": 11
+    },
+    {
+      "id": 48,
+      "name": "טלפון Realme",
+      "category": "טלפונים",
+      "price": 900,
+      "description": "טלפון במחיר משתלם עם ביצועים גבוהים",
+      "image": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300&h=200&fit=crop",
+      "stock": 32
+    },
+    {
+      "id": 50,
+      "name": "מסך עקום 32 אינץ'",
+      "category": "מחשבים",
+      "price": 2200,
+      "description": "מסך עקום 4K לעיצוב גרפי",
+      "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=300&h=200&fit=crop",
+      "stock": 8
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "productId": 1,
+      "userId": 2,
+      "rating": 5,
+      "comment": "מוצר מעולה! ממליץ בחום",
+      "date": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "productId": 2,
+      "userId": 2,
+      "rating": 4,
+      "comment": "טלפון טוב, אבל יקר",
+      "date": "2024-01-20"
+    },
+    {
+      "id": 3,
+      "rating": 4,
+      "comment": "מהמםם ממש ",
+      "productId": 6,
+      "userId": 3,
+      "date": "2025-12-28"
+    },
+    {
+      "id": 4,
+      "rating": 5,
+      "comment": "המוצר מושלם",
+      "productId": 9,
+      "userId": 3,
+      "date": "2025-12-28"
+    },
+    {
+      "id": 5,
+      "rating": 4,
+      "comment": "יפה מאוד מאוד",
+      "productId": 15,
+      "userId": 3,
+      "date": "2025-12-28"
+    },
+    {
+      "id": 6,
+      "rating": 5,
+      "comment": "מהמם מאודדד",
+      "productId": 2,
+      "userId": 3,
+      "date": "2025-12-30"
+    },
+    {
+      "id": 7,
+      "rating": 3,
+      "comment": "מושלם ברמותתתתת",
+      "productId": 46,
+      "userId": 4,
+      "date": "2025-12-31"
+    },
+    {
+      "id": 8,
+      "rating": 4,
+      "comment": "מושלםםםםםםםםםםםם",
+      "productId": 3,
+      "userId": 4,
+      "date": "2025-12-31"
+    },
+    {
+      "id": 9,
+      "rating": 4,
+      "comment": "מושלםםםםםםםםםםם",
+      "productId": 3,
+      "userId": 3,
+      "date": "2026-01-02"
+    },
+    {
+      "id": 10,
+      "rating": 5,
+      "comment": "המוצר ממש טוב",
+      "productId": 3,
+      "userId": 3,
+      "date": "2026-01-02"
+    },
+    {
+      "id": 11,
+      "rating": 4,
+      "comment": "מושששששששששש",
+      "productId": 11,
+      "userId": 3,
+      "date": "2026-01-19"
+    },
+    {
+      "id": 12,
+      "rating": 1,
+      "comment": "איךךךךךךךך",
+      "productId": 11,
+      "userId": 3,
+      "date": "2026-01-19"
+    },
+    {
+      "id": 14,
+      "rating": 2,
+      "comment": "איךךךךךךךךךךךךךךךךךך",
+      "productId": 23,
+      "userId": 3,
+      "date": "2026-01-19"
+    },
+    {
+      "id": 15,
+      "rating": 5,
+      "comment": "מוצר טוב ממש !!!",
+      "productId": 7,
+      "userId": 3,
+      "date": "2026-01-19"
+    },
+    {
+      "id": 16,
+      "rating": 5,
+      "comment": "מחשב פצצה\n",
+      "productId": 1,
+      "userId": 8,
+      "date": "2026-02-10"
+    },
+    {
+      "id": 17,
+      "rating": 2,
+      "comment": "לא אהבתי בכלל",
+      "productId": 3,
+      "userId": 8,
+      "date": "2026-02-10"
+    },
+    {
+      "id": 18,
+      "rating": 3,
+      "comment": "נדיררררררררר",
+      "productId": 11,
+      "userId": 3,
+      "date": "2026-02-20"
+    }
+  ]
+}
