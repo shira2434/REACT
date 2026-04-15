@@ -1,0 +1,90 @@
+// קובץ עיצוב SASS לפרויקט
+// משתנים גלובליים
+$primary-color: #667eea;
+$secondary-color: #764ba2;
+$success-color: #10b981;
+$error-color: #dc2626;
+
+// מיקסין לכפתורים
+@mixin button-style($bg-color: $primary-color) {
+  background-color: $bg-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+// עיצוב כרטיסים
+.card {
+  background-color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  
+  &__header {
+    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    
+    h2 {
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+}
+
+// עיצוב טפסים
+.form {
+  display: grid;
+  gap: 20px;
+  
+  &__group {
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  }
+  
+  &__submit {
+    @include button-style;
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+  }
+}
+
+// עיצוב כפתורים
+.btn {
+  @include button-style;
+  
+  &--success {
+    @include button-style($success-color);
+  }
+  
+  &--error {
+    @include button-style($error-color);
+  }
+}

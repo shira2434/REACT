@@ -1,0 +1,117 @@
+/* רקע שקוף של חלון קופץ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* תיבת החלון הקופץ */
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  margin: 20px;
+}
+
+/* כותרת */
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* טופס */
+.review-form {
+  display: grid;
+  gap: 25px;
+}
+
+/* תווית שדה */
+.field-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+/* תיבת בחירה */
+.rating-select {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* שדה טקסט */
+.comment-textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* הודעת שגיאה */
+.error-message {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* מיכל כפתורים */
+.button-container {
+  display: flex;
+  gap: 15px;
+}
+
+/* כפתור שליחה */
+.submit-button {
+  flex: 1;
+  background-color: #0891b2;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+}
+
+.submit-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* כפתור ביטול */
+.cancel-button {
+  flex: 1;
+  background-color: #6b7280;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
