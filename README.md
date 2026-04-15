@@ -1,16 +1,78 @@
-# React + Vite
+# ☕ Coffee Shop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+אפליקציית חנות קפה מלאה עם צד לקוח ב-React וצד שרת ב-Node.js/Express.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ טכנולוגיות
 
-## React Compiler
+**Frontend**
+- React 19, React Router, Redux Toolkit
+- Formik + Yup (טפסים ואימות)
+- Tailwind CSS + SCSS
+- Axios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Backend**
+- Node.js + Express
+- db.json (מסד נתונים מקומי)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📁 מבנה הפרויקט
+
+```
+├── src/
+│   ├── api/          # קריאות API
+│   ├── auth/         # התחברות והרשמה
+│   ├── cart/         # עגלת קניות ותשלום
+│   ├── components/   # קומפוננטות משותפות
+│   ├── layout/       # Navbar
+│   ├── products/     # רשימת מוצרים, פרטים, הוספה
+│   ├── profile/      # פרופיל משתמש
+│   ├── reviews/      # ביקורות
+│   ├── routes/       # ניתוב
+│   └── store/        # Redux store
+└── server/           # שרת Express
+```
+
+---
+
+## 🚀 הפעלה
+
+### 1. התקנת תלויות
+
+```bash
+# Frontend
+npm install
+
+# Backend
+cd server
+npm install
+```
+
+### 2. הפעלת השרת
+
+```bash
+cd server
+npm run dev
+```
+
+> השרת רץ על `http://localhost:3000`
+
+### 3. הפעלת הלקוח
+
+```bash
+npm run dev
+```
+
+> האפליקציה רצה על `http://localhost:5173`
+
+---
+
+## ✨ פיצ'רים
+
+- הרשמה והתחברות משתמשים
+- צפייה ברשימת מוצרים
+- הוספת מוצרים לעגלה ותשלום
+- הוספת ביקורות
+- ניהול פרופיל אישי
