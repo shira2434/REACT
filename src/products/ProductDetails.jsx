@@ -101,6 +101,17 @@ const ProductDetails = () => {
     <div style={{minHeight: '100vh', padding: '40px 20px', backgroundColor: '#f8fafc'}}>
       <div style={{maxWidth: '1100px', margin: '0 auto'}}>
 
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            marginBottom: '20px', background: 'none', border: 'none',
+            cursor: 'pointer', fontSize: '16px', color: '#0891b2',
+            display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600'
+          }}
+        >
+          ← חזרה
+        </button>
+
         {/* Top section: image left, details right */}
         <div style={{
           display: 'flex',

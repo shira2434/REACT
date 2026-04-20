@@ -4,6 +4,21 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://shira:shira@cluster0.balcnsz.mongodb.net/coffeeshop?appName=Cluster0';
+mongoose.connect(MONGO_URI).then(() => console.log('MongoDB connected')).catch(err => console.error('MongoDB error:', err));
+
+const orderSchema = new mongoose.Schema({
+  id: Number,
+  userId: Number,
+  date: String,
+  items: Array,
+  total: Number,
+  shipping: Object,
+  status: String
+});
+const Order = mongoose.model('Order', orderSchema);
 
 const app = express();
 
@@ -186,19 +201,14 @@ app.post('/api/reviews', authMiddleware, (req, res) => {
 
 // ── Orders ───────────────────────────────────────────────────────────────────
 
-app.get('/api/orders', authMiddleware, (req, res) => {
-  const data = readData();
-  const orders = (data.orders || []).filter(o => o.userId === req.user.id);
+app.get('/api/orders', authMiddleware, async (req, res) => {
+  const orders = await Order.find({ userId: req.user.id }).sort({ _id: -1 });
   res.json(orders);
 });
 
-app.post('/api/orders', authMiddleware, (req, res) => {
-  const data = readData();
-  if (!data.orders) data.orders = [];
-  const newOrder = { ...req.body, userId: req.user.id };
-  data.orders.unshift(newOrder);
-  writeData(data);
-  res.json({ success: true, order: newOrder });
+app.post('/api/orders', authMiddleware, async (req, res) => {
+  const order = await Order.create({ ...req.body, userId: req.user.id });
+  res.json({ success: true, order });
 });
 
 // ── Server Start ─────────────────────────────────────────────────────────────
