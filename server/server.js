@@ -13,7 +13,10 @@ const JWT_SECRET = 'coffee-shop-secret-key-2024';
 
 // הגדרות CORS מעודכנות לחיבור עם Vercel
 app.use(cors({
-  origin: ['https://react-kappa-blue.vercel.app', 'http://localhost:5173'],
+  origin: [
+    'https://shira-fullstack-project.vercel.app', 
+    'http://localhost:5173'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
