@@ -4,25 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
-
-const JSONBIN_BIN_ID = process.env.JSONBIN_BIN_ID;
-const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
-
-const readOrders = async () => {
-  try {
-    const res = await axios.get(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_API_KEY }
-    });
-    return res.data.record.orders || [];
-  } catch { return []; }
-};
-
-const writeOrders = async (orders) => {
-  await axios.put(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, { orders }, {
-    headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Content-Type': 'application/json' }
-  });
-};
 
 const app = express();
 
@@ -205,16 +186,18 @@ app.post('/api/reviews', authMiddleware, (req, res) => {
 
 // ── Orders ───────────────────────────────────────────────────────────────────
 
-app.get('/api/orders', authMiddleware, async (req, res) => {
-  const orders = await readOrders();
-  res.json(orders.filter(o => o.userId === req.user.id));
+app.get('/api/orders', authMiddleware, (req, res) => {
+  const data = readData();
+  const orders = (data.orders || []).filter(o => o.userId === req.user.id);
+  res.json(orders);
 });
 
-app.post('/api/orders', authMiddleware, async (req, res) => {
-  const orders = await readOrders();
+app.post('/api/orders', authMiddleware, (req, res) => {
+  const data = readData();
+  if (!data.orders) data.orders = [];
   const newOrder = { ...req.body, userId: req.user.id };
-  orders.unshift(newOrder);
-  await writeOrders(orders);
+  data.orders.unshift(newOrder);
+  writeData(data);
   res.json({ success: true, order: newOrder });
 });
 

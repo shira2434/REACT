@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ordersAPI } from '../api/api';
 
 const statusColors = {
   'התקבלה': { bg: '#f0fdf4', color: '#166534', border: '#86efac' },
@@ -9,17 +8,8 @@ const statusColors = {
 };
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const orders = useSelector(state => state.orders.list);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    ordersAPI.getOrders()
-      .then(res => setOrders(res.data))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <div style={{ textAlign: 'center', marginTop: '100px', fontSize: '18px' }}>טוען...</div>;
 
   if (orders.length === 0) {
     return (
