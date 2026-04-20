@@ -147,7 +147,8 @@ const ProductList = () => {
         <div style={{
           minWidth: '280px', width: '280px', background: 'white', borderRadius: '20px',
           boxShadow: '0 4px 16px rgba(200,98,42,0.1)', border: '2px solid #f0e0cc',
-          padding: '24px', position: 'sticky', top: '80px'
+          padding: '24px', position: 'sticky', top: '80px',
+          maxHeight: 'calc(100vh - 100px)', overflowY: 'auto'
         }}>
 
           {/* חיפוש */}
@@ -173,7 +174,7 @@ const ProductList = () => {
           <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>📂 קטגוריות</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
             {[{ name: '', label: 'כל הקטגוריות' }, ...categories.map(c => ({ name: c, label: `${categoryIcons[c]} ${c}` }))].map(cat => (
-              <button key={cat.name} onClick={() => setCategory(cat.name)} style={{
+              <button key={cat.name} onClick={() => { setCategory(cat.name); window.scrollTo({top: 0, behavior: 'smooth'}); }} style={{
                 textAlign: 'right', padding: '16px 20px', borderRadius: '14px', border: 'none',
                 cursor: 'pointer', fontSize: '17px', fontWeight: category === cat.name ? '700' : '400',
                 background: category === cat.name ? 'linear-gradient(135deg, #e8a87c, #c8622a)' : '#fdf3ec',

@@ -39,6 +39,26 @@
       "phone": "0552726826",
       "address": "דרכי איש 11, ביתר",
       "isAdmin": false
+    },
+    {
+      "id": 9,
+      "firstName": "שירה",
+      "lastName": "מרנשטיין",
+      "email": "shira@gmail.com",
+      "password": "$2b$10$aspl/t8Xz.6VGg/gxrWJv.1vk1IH2OkK/ZskoV69axwX2ams143Ba",
+      "phone": "0552726827",
+      "address": "רביבים 26",
+      "isAdmin": false
+    },
+    {
+      "id": 10,
+      "firstName": "שירה",
+      "lastName": "מרנשטיין",
+      "email": "shira2434@gmail.com",
+      "password": "$2b$10$F/y9ystB73QemadNC/RLru5LTM50/6zYAWpB6hmrANzziBvjqgH8e",
+      "phone": "0552726827",
+      "address": "רביבים 26",
+      "isAdmin": false
     }
   ],
   "products": [
@@ -340,7 +360,7 @@
       "description": "מגדל פנקייקים אוורירי עם סירופ מייפל, פירות יער וקצפת",
       "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
       "stock": 18,
-      "sold": 142
+      "sold": 143
     },
     {
       "id": 21,
@@ -743,6 +763,14 @@
       "productId": 3,
       "userId": 3,
       "date": "2026-04-19"
+    },
+    {
+      "id": 6,
+      "rating": 4,
+      "comment": "מושלםםםםםם",
+      "productId": 20,
+      "userId": 3,
+      "date": "2026-04-20"
     }
   ]
 }

@@ -30,7 +30,7 @@ const HomePage = () => {
       }}>
         {/* סרטון רקע */}
         <iframe
-          src="https://www.youtube-nocookie.com/embed/Lcyeu2hUOeY?autoplay=1&mute=1&loop=1&playlist=Lcyeu2hUOeY&controls=0&rel=0&modestbranding=1&playsinline=1"
+          src="https://www.youtube-nocookie.com/embed/Lcyeu2hUOeY?autoplay=1&mute=1&loop=1&playlist=Lcyeu2hUOeY&controls=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
           style={{
             position: 'absolute',
             top: '50%', left: '50%',
@@ -39,7 +39,8 @@ const HomePage = () => {
             border: 'none', zIndex: 0,
             pointerEvents: 'none',
           }}
-          allow="autoplay; encrypted-media"
+          allow="autoplay; encrypted-media; fullscreen"
+          allowFullScreen
         />
         {/* שכבת כהות */}
         <div style={{
