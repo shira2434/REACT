@@ -1,118 +1,84 @@
 /* ================================
-   איפוס סגנונות ברירת מחדל
+   🍽️ לה קוצ'ינה - עיצוב גלובלי
 ================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
 
-ul, ol {
-  list-style: none;
-}
-
-/* ================================
-   רקע דינמי עם גרדיאנט זורם
-================================ */
 html, body {
   height: 100%;
   width: 100%;
-  background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #e2e8f0, #f8fafc);
+  background: linear-gradient(-45deg, #fdf8f0, #fef3e2, #fdf0f0, #f0f7f0);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
 }
 
 @keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* ================================
-   מיכל מרכזי של האפליקציה
-================================ */
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
+#root { width: 100%; min-height: 100vh; }
 
-.container {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* ================================
-   כותרות
-================================ */
-h1 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1e293b;
-  text-align: center;
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-  margin-bottom: 24px;
-}
-
-/* ================================
-   כפתורים
-================================ */
 button:not(.logout-btn), .btn {
   padding: 12px 24px;
   border: none;
-  border-radius: 8px;
-  background: #059669;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #e8a87c, #c8622a);
   color: white;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 4px 15px rgba(200, 98, 42, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:not(.logout-btn):hover, .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
-  background: #047857;
+  box-shadow: 0 6px 20px rgba(200, 98, 42, 0.45);
 }
 
 .logout-btn {
-  background: #6B7280 !important;
+  background: rgba(255,255,255,0.2) !important;
   color: white !important;
   padding: 8px 16px !important;
-  border-radius: 12px !important;
-  border: none !important;
+  border-radius: 50px !important;
+  border: 1px solid rgba(255,255,255,0.4) !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   cursor: pointer !important;
+  transition: background 0.2s !important;
 }
 
-/* ================================
-   שדות קלט
-================================ */
-input {
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3) !important;
+}
+
+input, select, textarea {
   padding: 10px 14px;
-  border-radius: 6px;
-  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  border: 2px solid #f0e0cc;
   outline: none;
   font-size: 16px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: white;
 }
 
-input:focus {
-  border-color: #059669;
-  box-shadow: 0 0 8px rgba(5, 150, 105, 0.3);
+input:focus, select:focus, textarea:focus {
+  border-color: #e8a87c;
+  box-shadow: 0 0 8px rgba(232, 168, 124, 0.4);
 }
 
-/* ================================
-   מעבר חלק לכל האלמנטים
-================================ */
-button, input {
-  transition: all 0.2s ease-in-out;
+.product-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(200, 98, 42, 0.15) !important;
 }

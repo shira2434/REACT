@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productsAPI, reviewsAPI } from '../api/api';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, toggleWishlist, addToast } from '../store/store';
 import AddReview from '../reviews/AddReview';
 
 const ProductDetails = () => {
@@ -17,10 +17,22 @@ const ProductDetails = () => {
   const [added, setAdded] = useState(false);
   const dispatch = useDispatch();
 
+  const wishlistItems = useSelector(state => state.wishlist.items);
+  const isWishlisted = product ? wishlistItems.some(i => i.id === product.id) : false;
+
   const handleAddToCart = () => {
     dispatch(addToCart(product));
+    dispatch(addToast({ type: 'success', message: `${product.name} נוסף לסל!` }));
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+  };
+
+  const handleToggleWishlist = () => {
+    dispatch(toggleWishlist(product));
+    dispatch(addToast({
+      type: isWishlisted ? 'info' : 'success',
+      message: isWishlisted ? `${product.name} הוסר מהמועדפים` : `${product.name} נוסף למועדפים! ❤️`
+    }));
   };
 
   useEffect(() => {
@@ -47,13 +59,12 @@ const ProductDetails = () => {
   };
 
   const handleDeleteReview = async (reviewId) => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק את חוות הדעת הזו?')) {
-      try {
-        await reviewsAPI.deleteReview(reviewId);
-        setReviews(prev => prev.filter(r => r.id !== reviewId));
-      } catch (error) {
-        alert('שגיאה במחיקת חוות דעת');
-      }
+    try {
+      await reviewsAPI.deleteReview(reviewId);
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      dispatch(addToast({ type: 'success', message: 'חוות הדעת נמחקה' }));
+    } catch (error) {
+      dispatch(addToast({ type: 'error', message: 'שגיאה במחיקת חוות דעת' }));
     }
   };
 
@@ -87,103 +98,101 @@ const ProductDetails = () => {
     : 0;
 
   return (
-    <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '20px'}}>
-      <div style={{textAlign: 'center', maxWidth: '600px'}}>
+    <div style={{minHeight: '100vh', padding: '40px 20px', backgroundColor: '#f8fafc'}}>
+      <div style={{maxWidth: '1100px', margin: '0 auto'}}>
+
+        {/* Top section: image left, details right */}
         <div style={{
+          display: 'flex',
+          flexDirection: 'row-reverse',
+          gap: '40px',
+          alignItems: 'flex-start',
           backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '15px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-          marginBottom: '15px'
+          borderRadius: '20px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          padding: '40px',
+          marginBottom: '40px'
         }}>
-          <img
-            src={product.image}
-            alt={product.name}
-            style={{
-              width: '100%',
-              maxWidth: '400px',
-              height: '300px',
-              objectFit: 'cover',
-              borderRadius: '15px'
-            }}
-          />
-        </div>
+          {/* Right side: details */}
+          <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '16px'}}>
+            <h1 style={{fontSize: '32px', fontWeight: 'bold', color: '#1f2937', margin: 0}}>{product.name}</h1>
 
-        <h1 style={{fontSize: '32px', fontWeight: 'bold', marginBottom: '10px', color: '#1f2937'}}>{product.name}</h1>
-        
-        <div style={{fontSize: '20px', color: '#0891b2', marginBottom: '15px'}}>
-          דירוג: {averageRating} ★ ({reviews.length} חווות דעת)
-        </div>
-        
-        <p style={{fontSize: '18px', color: '#64748b', marginBottom: '20px'}}>{product.description}</p>
-        
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '15px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-          marginBottom: '20px'
-        }}>
-          <div style={{fontSize: '42px', fontWeight: 'bold', color: '#0891b2', marginBottom: '15px'}}>
-            ₪{product.price.toLocaleString()}
-          </div>
-          <div style={{height: '1px', backgroundColor: '#e2e8f0', marginBottom: '15px'}}></div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-            <div style={{display: 'flex', alignItems: 'center', color: '#64748b', fontSize: '14px'}}>
-              <span style={{marginLeft: '8px'}}>📦</span>
-              קטגוריה: {product.category}
+            <div style={{fontSize: '16px', color: '#0891b2'}}>
+              {averageRating} ★ <span style={{color: '#94a3b8'}}>({reviews.length} חווות דעת)</span>
             </div>
-            <div style={{display: 'flex', alignItems: 'center', color: '#64748b', fontSize: '14px'}}>
-              <span style={{marginLeft: '8px'}}>📊</span>
-              במלאי: {product.stock} יחידות
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', color: '#64748b', fontSize: '14px'}}>
-              <span style={{marginLeft: '8px'}}>🛒</span>
-              נמכר: {product.sold || 0} יחידות
-            </div>
-          </div>
-        </div>
 
-        {user && !user.isAdmin && (
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '30px', flexWrap: 'wrap' }}>
-            <button
-              onClick={handleAddToCart}
+            <p style={{fontSize: '17px', color: '#64748b', lineHeight: '1.7', margin: 0}}>{product.description}</p>
+
+            <div style={{height: '1px', backgroundColor: '#e2e8f0'}}></div>
+
+            <div style={{fontSize: '40px', fontWeight: 'bold', color: '#0891b2'}}>₪{product.price.toLocaleString()}</div>
+
+            <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+              <div style={{color: '#64748b', fontSize: '14px'}}>📦 קטגוריה: {product.category}</div>
+              <div style={{color: '#64748b', fontSize: '14px'}}>📊 במלאי: {product.stock} יחידות</div>
+              <div style={{color: '#64748b', fontSize: '14px'}}>🛒 נמכר: {product.sold || 0} יחידות</div>
+            </div>
+
+            {user && !user.isAdmin && (
+              <div style={{display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px'}}>
+                <button
+                  onClick={handleAddToCart}
+                  style={{
+                    backgroundColor: added ? '#16a34a' : '#0891b2',
+                    color: 'white', padding: '12px 24px', borderRadius: '12px',
+                    border: 'none', cursor: 'pointer', fontSize: '15px',
+                    fontWeight: 'bold', transition: 'background 0.3s'
+                  }}
+                >
+                  {added ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
+                </button>
+                <button
+                  onClick={handleToggleWishlist}
+                  style={{
+                    backgroundColor: isWishlisted ? '#fef2f2' : 'white',
+                    color: isWishlisted ? '#e11d48' : '#0891b2',
+                    padding: '12px 24px', borderRadius: '12px',
+                    border: `2px solid ${isWishlisted ? '#e11d48' : '#0891b2'}`,
+                    cursor: 'pointer', fontSize: '15px'
+                  }}
+                >
+                  {isWishlisted ? '❤️ הסר ממועדפים' : '🤍 הוסף למועדפים'}
+                </button>
+                <button
+                  onClick={() => setShowAddReview(true)}
+                  style={{
+                    backgroundColor: 'white', color: '#0891b2', padding: '12px 24px',
+                    borderRadius: '12px', border: '2px solid #0891b2',
+                    cursor: 'pointer', fontSize: '15px'
+                  }}
+                >
+                  ✍ כתוב חוות דעת
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Left side: image */}
+          <div style={{flexShrink: 0}}>
+            <img
+              src={product.image}
+              alt={product.name}
               style={{
-                backgroundColor: added ? '#16a34a' : '#0891b2',
-                color: 'white',
-                padding: '14px 28px',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                transition: 'background 0.3s'
+                width: '420px',
+                height: '340px',
+                objectFit: 'cover',
+                borderRadius: '16px',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.12)'
               }}
-            >
-              {added ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
-            </button>
-            <button
-              onClick={() => setShowAddReview(true)}
-              style={{
-                backgroundColor: 'white',
-                color: '#0891b2',
-                padding: '14px 28px',
-                borderRadius: '12px',
-                border: '2px solid #0891b2',
-                cursor: 'pointer',
-                fontSize: '16px'
-              }}
-            >
-              ✍ כתוב חוות דעת
-            </button>
+            />
           </div>
-        )}
+        </div>
 
+        {/* Reviews section */}
         <div style={{
           backgroundColor: '#f0f9ff',
-          padding: '30px 20px 20px',
-          borderRadius: '15px',
-          marginTop: '40px'
+          padding: '30px',
+          borderRadius: '20px',
         }}>
           <h2 style={{
             fontSize: '28px', 

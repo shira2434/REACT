@@ -1,305 +1,174 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { usersAPI } from '../api/api';
+import { updateUser, addToast } from '../store/store';
+
+const PRIMARY = '#c8622a';
 
 const validationSchema = Yup.object({
-  firstName: Yup.string()
-    .min(2, 'שם פרטי חייב להכיל לפחות 2 תווים')
-    .required('שדה חובה'),
-  lastName: Yup.string()
-    .min(2, 'שם משפחה חייב להכיל לפחות 2 תווים')
-    .required('שדה חובה'),
-  email: Yup.string()
-    .email('כתובת אימייל לא תקינה')
-    .required('שדה חובה'),
-  phone: Yup.string()
-    .matches(/^05[0-9]-?[0-9]{7}$/, 'מספר טלפון לא תקין')
-    .required('שדה חובה'),
-  address: Yup.string()
-    .min(5, 'כתובת חייבת להכיל לפחות 5 תווים')
-    .required('שדה חובה')
+  firstName: Yup.string().min(2, 'לפחות 2 תווים').required('שדה חובה'),
+  lastName: Yup.string().min(2, 'לפחות 2 תווים').required('שדה חובה'),
+  email: Yup.string().email('אימייל לא תקין').required('שדה חובה'),
+  phone: Yup.string().matches(/^05[0-9]-?[0-9]{7}$/, 'טלפון לא תקין').required('שדה חובה'),
+  address: Yup.string().min(5, 'לפחות 5 תווים').required('שדה חובה'),
 });
+
+const inputStyle = {
+  width: '100%', padding: '13px 16px', border: '2px solid #e8d5c4',
+  borderRadius: '12px', fontSize: '15px', outline: 'none',
+  boxSizing: 'border-box', background: 'white', color: '#1f2937',
+  transition: 'border-color 0.2s',
+};
+
+const labelStyle = {
+  display: 'block', fontSize: '13px', fontWeight: '600',
+  color: '#6b3a1f', marginBottom: '6px',
+};
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    if (userData) setUser(JSON.parse(userData));
   }, []);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await usersAPI.updateUser(user.id, values);
-      
       if (response.data.success) {
         const updatedUser = response.data.user;
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
+        dispatch(updateUser(updatedUser));
+        dispatch(addToast({ type: 'success', message: 'הפרטים עודכנו בהצלחה! ✅' }));
       }
-    } catch (error) {
-      alert('שגיאה בעדכון הפרטים');
+    } catch {
+      dispatch(addToast({ type: 'error', message: 'שגיאה בעדכון הפרטים' }));
     }
     setSubmitting(false);
   };
 
-  if (!user) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">טוען...</div>
-      </div>
-    );
-  }
+  if (!user) return null;
+
+  const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
 
   return (
-    <div style={{padding: '20px', marginTop: '40px', maxWidth: '800px', margin: '40px auto 0'}}>
-      <div style={{
-        background: 'linear-gradient(135deg, #0891b2 0%, #0c4a6e 100%)',
-        padding: '40px',
-        textAlign: 'center',
-        marginBottom: '40px',
-        borderRadius: '20px',
-        boxShadow: '0 15px 35px rgba(0,0,0,0.1)'
-      }}>
-        <h1 style={{
-          fontSize: '48px',
-          color: 'white',
-          fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-          margin: '0'
-        }}>
-          👤 הפרטים שלי 👤
-        </h1>
-      </div>
-      
-      {success && (
+    <div style={{ minHeight: '100vh', background: '#fdf6f0', padding: '40px 24px' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+
+        {/* כרטיס פרופיל עליון */}
         <div style={{
-          backgroundColor: '#d4edda',
-          border: '1px solid #c3e6cb',
-          color: '#155724',
-          padding: '15px',
-          borderRadius: '10px',
-          marginBottom: '30px',
-          textAlign: 'center',
-          fontSize: '16px'
+          background: 'linear-gradient(135deg, #3b1a08 0%, #8b3a1a 50%, #c8622a 100%)',
+          borderRadius: '24px', padding: '40px', marginBottom: '28px',
+          boxShadow: '0 15px 35px rgba(139,58,26,0.25)',
+          display: 'flex', alignItems: 'center', gap: '24px',
         }}>
-          ✅ הפרטים עודכנו בהצלחה!
-        </div>
-      )}
-
-      <div style={{
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '20px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-      }}>
-        <Formik
-          initialValues={{
-            firstName: user.firstName || '',
-            lastName: user.lastName || '',
-            email: user.email || '',
-            phone: user.phone || '',
-            address: user.address || ''
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ isSubmitting }) => (
-            <Form style={{
-              display: 'grid',
-              gap: '25px'
+          {/* אווטאר */}
+          <div style={{
+            width: '80px', height: '80px', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.2)', border: '3px solid rgba(255,255,255,0.4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '28px', fontWeight: '800', color: 'white', flexShrink: 0,
+          }}>
+            {initials}
+          </div>
+          <div>
+            <h1 style={{ fontSize: '26px', fontWeight: '800', color: 'white', margin: '0 0 4px' }}>
+              {user.firstName} {user.lastName}
+            </h1>
+            <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', margin: '0 0 10px' }}>
+              {user.email}
+            </p>
+            <span style={{
+              background: user.isAdmin ? 'rgba(251,191,36,0.25)' : 'rgba(255,255,255,0.15)',
+              border: `1px solid ${user.isAdmin ? 'rgba(251,191,36,0.5)' : 'rgba(255,255,255,0.3)'}`,
+              color: user.isAdmin ? '#fbbf24' : 'white',
+              padding: '4px 14px', borderRadius: '50px', fontSize: '13px', fontWeight: '600',
             }}>
-              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '8px'
-                  }}>
-                    👤 שם פרטי
-                  </label>
-                  <Field
-                    name="firstName"
-                    style={{
-                      width: '100%',
-                      padding: '15px',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
-                  <ErrorMessage name="firstName" component="div" style={{color: '#dc2626', fontSize: '14px', marginTop: '5px'}} />
+              {user.isAdmin ? '👑 מנהל מערכת' : '👤 משתמש'}
+            </span>
+          </div>
+        </div>
+
+        {/* טופס עריכה */}
+        <div style={{
+          background: 'white', borderRadius: '24px', padding: '36px',
+          boxShadow: '0 4px 20px rgba(200,98,42,0.1)', border: '2px solid #f0e0cc',
+        }}>
+          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#3b1a08', margin: '0 0 28px' }}>
+            עריכת פרטים
+          </h2>
+
+          <Formik
+            initialValues={{
+              firstName: user.firstName || '',
+              lastName: user.lastName || '',
+              email: user.email || '',
+              phone: user.phone || '',
+              address: user.address || '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {({ isSubmitting }) => (
+              <Form style={{ display: 'grid', gap: '20px' }}>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={labelStyle}>שם פרטי</label>
+                    <Field name="firstName" style={inputStyle} />
+                    <ErrorMessage name="firstName" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>שם משפחה</label>
+                    <Field name="lastName" style={inputStyle} />
+                    <ErrorMessage name="lastName" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
+                  </div>
                 </div>
 
                 <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '8px'
-                  }}>
-                    👤 שם משפחה
-                  </label>
-                  <Field
-                    name="lastName"
-                    style={{
-                      width: '100%',
-                      padding: '15px',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
-                  <ErrorMessage name="lastName" component="div" style={{color: '#dc2626', fontSize: '14px', marginTop: '5px'}} />
+                  <label style={labelStyle}>אימייל</label>
+                  <Field type="email" name="email" style={inputStyle} />
+                  <ErrorMessage name="email" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
                 </div>
-              </div>
 
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  📧 אימייל
-                </label>
-                <Field
-                  type="email"
-                  name="email"
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={labelStyle}>טלפון</label>
+                    <Field name="phone" placeholder="050-1234567" style={inputStyle} />
+                    <ErrorMessage name="phone" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>כתובת</label>
+                    <Field name="address" style={inputStyle} />
+                    <ErrorMessage name="address" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
                   style={{
-                    width: '100%',
-                    padding: '15px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '16px',
-                    transition: 'border-color 0.3s'
+                    width: '100%', marginTop: '8px',
+                    background: isSubmitting ? '#e5e7eb' : 'linear-gradient(135deg, #e8a87c, #c8622a)',
+                    color: isSubmitting ? '#9ca3af' : 'white',
+                    padding: '14px', borderRadius: '12px', border: 'none',
+                    fontSize: '16px', fontWeight: '700', cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    boxShadow: isSubmitting ? 'none' : '0 4px 16px rgba(200,98,42,0.35)',
+                    transition: 'all 0.2s',
                   }}
-                />
-                <ErrorMessage name="email" component="div" style={{color: '#dc2626', fontSize: '14px', marginTop: '5px'}} />
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  📱 טלפון
-                </label>
-                <Field
-                  name="phone"
-                  placeholder="050-1234567"
-                  style={{
-                    width: '100%',
-                    padding: '15px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '16px',
-                    transition: 'border-color 0.3s'
-                  }}
-                />
-                <ErrorMessage name="phone" component="div" style={{color: '#dc2626', fontSize: '14px', marginTop: '5px'}} />
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  🏠 כתובת
-                </label>
-                <Field
-                  name="address"
-                  style={{
-                    width: '100%',
-                    padding: '15px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '16px',
-                    transition: 'border-color 0.3s'
-                  }}
-                />
-                <ErrorMessage name="address" component="div" style={{color: '#dc2626', fontSize: '14px', marginTop: '5px'}} />
-              </div>
-
-              <div style={{
-                backgroundColor: '#f8fafc',
-                padding: '20px',
-                borderRadius: '15px',
-                border: '2px solid #e2e8f0'
-              }}>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  ℹ️ מידע נוסף
-                </h3>
-                <p style={{
-                  fontSize: '16px',
-                  color: '#6b7280',
-                  margin: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <span style={{
-                    backgroundColor: user.isAdmin ? '#0891b2' : '#0891b2',
-                    color: 'white',
-                    padding: '4px 12px',
-                    borderRadius: '20px',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}>
-                    {user.isAdmin ? '👑 מנהל מערכת' : '👤 משתמש רגיל'}
-                  </span>
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  width: '100%',
-                  backgroundColor: isSubmitting ? '#9ca3af' : '#0891b2',
-                  color: 'white',
-                  padding: '18px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'background-color 0.3s',
-                  boxShadow: '0 4px 12px rgba(8, 145, 178, 0.3)'
-                }}
-              >
-                {isSubmitting ? '💾 שומר...' : '💾 שמור שינויים'}
-              </button>
-            </Form>
-          )}
-        </Formik>
+                >
+                  {isSubmitting ? 'שומר...' : 'שמור שינויים'}
+                </button>
+              </Form>
+            )}
+          </Formik>
+        </div>
       </div>
     </div>
   );

@@ -1,376 +1,334 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { productsAPI } from '../api/api';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../store/store';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, toggleWishlist, addToast } from '../store/store';
 import ConfirmDialog from '../components/ConfirmDialog';
+
+const PRIMARY = '#c8622a';
+const PRIMARY_LIGHT = '#fdf3ec';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
-  const [user, setUser] = useState(null);
+  const [search, setSearch] = useState(new URLSearchParams(window.location.search).get('search') || '');
+  const [category, setCategory] = useState(new URLSearchParams(window.location.search).get('category') || '');
+  const [sortBy, setSortBy] = useState(new URLSearchParams(window.location.search).get('sort') || '');
+  const [priceRange, setPriceRange] = useState([0, 200]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(new URLSearchParams(window.location.search).get('page')) || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
+  const user = useSelector(state => state.user.currentUser);
+  const wishlistItems = useSelector(state => state.wishlist.items);
   const [addedMap, setAddedMap] = useState({});
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
+    dispatch(addToast({ type: 'success', message: `${product.name} נוסף לסל! 🛒` }));
     setAddedMap(prev => ({ ...prev, [product.id]: true }));
     setTimeout(() => setAddedMap(prev => ({ ...prev, [product.id]: false })), 1500);
   };
 
+  const handleToggleWishlist = (product) => {
+    const isInWishlist = wishlistItems.some(i => i.id === product.id);
+    dispatch(toggleWishlist(product));
+    dispatch(addToast({
+      type: isInWishlist ? 'info' : 'success',
+      message: isInWishlist ? `${product.name} הוסר מהמועדפים` : `${product.name} נוסף למועדפים! ❤️`
+    }));
+  };
+
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
+    if (location.state?.category) {
+      setCategory(location.state.category);
     }
-    loadProducts();
   }, []);
 
   useEffect(() => {
-    setCurrentPage(1);
-    window.scrollTo(0, 0);
-  }, [search, category]);
+    const p = new URLSearchParams();
+    if (search) p.set('search', search);
+    if (category) p.set('category', category);
+    if (sortBy) p.set('sort', sortBy);
+    if (currentPage > 1) p.set('page', currentPage);
+    window.history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+  }, [search, category, sortBy, currentPage]);
+  useEffect(() => { loadProducts(); }, []);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    loadProducts();
-  }, [search, category, currentPage]);
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    setCurrentPage(1);
+  }, [search, category]);
+  useEffect(() => { loadProducts(); }, [search, category, currentPage]);
 
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const response = await productsAPI.getProducts({
-        search,
-        category,
-        page: currentPage,
-        limit: 20
-      });
+      const response = await productsAPI.getProducts({ search, category, page: currentPage, limit: 20 });
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages || Math.ceil(response.data.total / 20));
       setTotalProducts(response.data.total || response.data.products.length);
-    } catch (error) {
-      console.error('Error loading products:', error);
+    } catch {
+      dispatch(addToast({ type: 'error', message: 'שגיאה בטעינת התפריט' }));
     }
     setLoading(false);
   };
 
-  const handleDeleteClick = (product) => {
-    setProductToDelete(product);
-    setShowConfirm(true);
+  const getSortedProducts = () => {
+    const sorted = [...products].filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    if (sortBy === 'price-asc') return sorted.sort((a, b) => a.price - b.price);
+    if (sortBy === 'price-desc') return sorted.sort((a, b) => b.price - a.price);
+    if (sortBy === 'popular') return sorted.sort((a, b) => (b.sold || 0) - (a.sold || 0));
+    if (sortBy === 'name') return sorted.sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    return sorted;
   };
 
   const handleConfirmDelete = async () => {
     try {
       await productsAPI.deleteProduct(productToDelete.id);
+      dispatch(addToast({ type: 'success', message: `${productToDelete.name} נמחק בהצלחה` }));
       loadProducts();
       setShowConfirm(false);
       setProductToDelete(null);
-    } catch (error) {
-      alert('שגיאה במחיקת המוצר');
+    } catch {
+      dispatch(addToast({ type: 'error', message: 'שגיאה במחיקת המנה' }));
     }
   };
 
-  const handleCancelDelete = () => {
-    setShowConfirm(false);
-    setProductToDelete(null);
+  const sortedProducts = getSortedProducts();
+
+  const categoryIcons = {
+    'סלטים': '🥗', 'פיצות': '🍕', 'כריכים ולחמים': '🥙',
+    'פסטות': '🍝', 'מנות גבינות': '🧀', 'בוקר ובראנץ\'': '🥞',
+    'קינוחים': '🍰', 'שתייה': '🥤'
   };
 
+  const categories = ['סלטים', 'פיצות', 'כריכים ולחמים', 'פסטות', 'מנות גבינות', "בוקר ובראנץ'", 'קינוחים', 'שתייה'];
+
+  const maxPrice = 200;
+
   return (
-    <div style={{padding: '20px', marginTop: '40px', paddingTop: '20px'}}>
+    <div style={{ padding: '24px', paddingTop: '30px' }}>
+
+      {/* כותרת */}
       <div style={{
-        background: 'linear-gradient(135deg, #0891b2 0%, #0c4a6e 100%)',
-        padding: '40px',
-        textAlign: 'center',
-        marginBottom: '40px',
-        borderRadius: '20px',
-        boxShadow: '0 15px 35px rgba(0,0,0,0.1)'
+        background: 'linear-gradient(135deg, #e8a87c 0%, #8b3a1a 100%)',
+        padding: '40px', textAlign: 'center', marginBottom: '30px',
+        borderRadius: '24px', boxShadow: '0 15px 35px rgba(139,58,26,0.25)',
+        position: 'relative'
       }}>
-        <h1 style={{
-          fontSize: '48px',
-          color: 'white',
-          fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-          margin: '0'
+        <button onClick={() => navigate('/home')} style={{
+          position: 'absolute', top: '16px', right: '16px',
+          background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
+          color: 'white', padding: '8px 16px', borderRadius: '50px',
+          cursor: 'pointer', fontSize: '13px', fontWeight: '600', backdropFilter: 'blur(10px)'
         }}>
-          🛒 חנות המוצרים שלנו 🛒
+          ← חזרה לקטגוריות
+        </button>
+        <h1 style={{ fontSize: '48px', color: 'white', fontWeight: 'bold', margin: '0', textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}>
+          🍽️ לה קוצ'ינה
         </h1>
-        <p style={{
-          fontSize: '18px',
-          color: 'rgba(255,255,255,0.9)',
-          marginTop: '10px',
-          fontWeight: '300'
-        }}>
-          עיין בכל המוצרים האיכותיים והמגוונים שלנו
+        <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginTop: '10px', fontWeight: '300' }}>
+          קייטרינג חלבי איטלקי • מנות טריות מדי יום ✨
         </p>
       </div>
 
-      <div style={{
-        backgroundColor: '#0891b2',
-        padding: '30px',
-        borderRadius: '15px',
-        marginBottom: '40px',
-        textAlign: 'center'
-      }}>
-        <h2 style={{color: 'white', fontSize: '24px', marginBottom: '20px'}}>
-          🔍 חפש מוצרים
-        </h2>
-        <div style={{display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap'}}>
+      {/* layout: sidebar + מוצרים */}
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+
+        {/* Sidebar */}
+        <div style={{
+          minWidth: '280px', width: '280px', background: 'white', borderRadius: '20px',
+          boxShadow: '0 4px 16px rgba(200,98,42,0.1)', border: '2px solid #f0e0cc',
+          padding: '24px', position: 'sticky', top: '80px'
+        }}>
+
+          {/* חיפוש */}
+          <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>🔍 חיפוש</h3>
           <input
-            type="text"
-            placeholder="חפש מוצר..."
-            value={search}
+            type="text" placeholder="חפש מנה..." value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{
-              padding: '15px',
-              fontSize: '16px',
-              border: 'none',
-              borderRadius: '8px',
-              width: '100%',
-              maxWidth: '300px',
-              minWidth: '200px'
-            }}
+            style={{ width: '100%', padding: '9px 12px', fontSize: '14px', border: '2px solid #f0e0cc', borderRadius: '10px', outline: 'none', boxSizing: 'border-box', marginBottom: '20px' }}
           />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{
-              padding: '15px',
-              fontSize: '16px',
-              border: 'none',
-              borderRadius: '8px',
-              width: '100%',
-              maxWidth: '200px',
-              minWidth: '150px'
-            }}
-          >
-            <option value="">כל הקטגוריות</option>
-            <option value="מחשבים">מחשבים</option>
-            <option value="טלפונים">טלפונים</option>
-            <option value="אביזרים">אביזרים</option>
-            <option value="טאבלטים">טאבלטים</option>
-            <option value="צילום">צילום</option>
-            <option value="גיימינג">גיימינג</option>
-            <option value="בית חכם">בית חכם</option>
+
+          {/* מיון */}
+          <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>↕️ מיון</h3>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+            style={{ width: '100%', padding: '9px 12px', fontSize: '14px', border: '2px solid #f0e0cc', borderRadius: '10px', marginBottom: '20px', background: 'white', color: '#1f2937' }}>
+            <option value="">ברירת מחדל</option>
+            <option value="price-asc">מחיר: נמוך לגבוה</option>
+            <option value="price-desc">מחיר: גבוה לנמוך</option>
+            <option value="popular">הכי פופולרי 🔥</option>
+            <option value="name">לפי שם</option>
           </select>
-        </div>
-      </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '20px'
-      }}>
-        {products.map(product => (
-          <div key={product.id} style={{
-            backgroundColor: 'white',
-            borderRadius: '10px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            overflow: 'hidden',
-            border: '1px solid #e5e7eb'
-          }}>
-            <img
-              src={product.image}
-              alt={product.name}
-              style={{
-                width: '100%',
-                height: '200px',
-                objectFit: 'cover',
-                cursor: 'pointer'
-              }}
-              onClick={() => navigate(`/product/${product.id}`)}
-            />
-            <div style={{padding: '15px'}}>
-              <h3 style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                marginBottom: '10px',
-                color: '#1f2937'
+          {/* קטגוריות */}
+          <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>📂 קטגוריות</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+            {[{ name: '', label: 'כל הקטגוריות' }, ...categories.map(c => ({ name: c, label: `${categoryIcons[c]} ${c}` }))].map(cat => (
+              <button key={cat.name} onClick={() => setCategory(cat.name)} style={{
+                textAlign: 'right', padding: '16px 20px', borderRadius: '14px', border: 'none',
+                cursor: 'pointer', fontSize: '17px', fontWeight: category === cat.name ? '700' : '400',
+                background: category === cat.name ? 'linear-gradient(135deg, #e8a87c, #c8622a)' : '#fdf3ec',
+                color: category === cat.name ? 'white' : '#8b3a1a', transition: 'all 0.2s'
               }}>
-                {product.name}
-              </h3>
-              <p style={{
-                fontSize: '14px',
-                color: '#6b7280',
-                marginBottom: '15px',
-                height: '40px',
-                overflow: 'hidden'
-              }}>
-                {product.description}
-              </p>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '15px'
-              }}>
-                <span style={{
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  color: '#0891b2'
-                }}>
-                  ₪{product.price.toLocaleString()}
-                </span>
-                <span style={{
-                  fontSize: '12px',
-                  backgroundColor: '#f0f9ff',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  color: '#0c4a6e'
-                }}>
-                  במלאי: {product.stock}
-                </span>
-              </div>
-              <button
-                onClick={() => navigate(`/product/${product.id}`)}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#0891b2',
-                  color: 'white',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  marginBottom: '8px'
-                }}
-              >
-                צפה בפרטים
+                {cat.label}
               </button>
-              {!user?.isAdmin && (
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: addedMap[product.id] ? '#16a34a' : '#f0f9ff',
-                    color: addedMap[product.id] ? 'white' : '#0891b2',
-                    padding: '10px',
-                    borderRadius: '6px',
-                    border: '1px solid #0891b2',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    marginBottom: '8px',
-                    transition: 'all 0.3s'
-                  }}
-                >
-                  {addedMap[product.id] ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
-                </button>
-              )}
-              {user?.isAdmin && (
-                <button
-                  onClick={() => handleDeleteClick(product)}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded text-sm"
-                >
-                  🗑 מחק מוצר
-                </button>
-              )}
-            </div>
+            ))}
           </div>
-        ))}
+
+          {/* טווח מחירים */}
+          <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>💰 טווח מחירים</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#c8622a', fontWeight: '600', marginBottom: '6px' }}>
+            <span>₪{priceRange[0]}</span>
+            <span>₪{priceRange[1]}</span>
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ fontSize: '12px', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>מינימום</label>
+            <input type="range" min={0} max={maxPrice} value={priceRange[0]}
+              onChange={e => setPriceRange([Math.min(+e.target.value, priceRange[1] - 5), priceRange[1]])}
+              style={{ width: '100%', accentColor: '#c8622a' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>מקסימום</label>
+            <input type="range" min={0} max={maxPrice} value={priceRange[1]}
+              onChange={e => setPriceRange([priceRange[0], Math.max(+e.target.value, priceRange[0] + 5)])}
+              style={{ width: '100%', accentColor: '#c8622a' }}
+            />
+          </div>
+          {(priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+            <button onClick={() => setPriceRange([0, maxPrice])}
+              style={{ marginTop: '10px', width: '100%', padding: '6px', borderRadius: '8px', border: '1px solid #c8622a', background: 'white', color: '#c8622a', fontSize: '12px', cursor: 'pointer' }}>
+              אפס מחירים
+            </button>
+          )}
+        </div>
+
+      {/* רשת מוצרים */}
+      <div style={{ flex: 1 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+        {sortedProducts.map(product => {
+          const isWishlisted = wishlistItems.some(i => i.id === product.id);
+          return (
+            <div key={product.id} className="product-card" style={{
+              backgroundColor: 'white', borderRadius: '20px',
+              boxShadow: '0 4px 16px rgba(200,98,42,0.1)', overflow: 'hidden',
+              border: '2px solid #f0e0cc', position: 'relative'
+            }}>
+              {!user?.isAdmin && (
+                <button onClick={() => handleToggleWishlist(product)} style={{
+                  position: 'absolute', top: '12px', right: '12px', zIndex: 1,
+                  background: 'white', border: 'none', borderRadius: '50%',
+                  width: '36px', height: '36px', cursor: 'pointer', fontSize: '20px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center'
+                }}>
+                  {isWishlisted ? '❤️' : '🤍'}
+                </button>
+              )}
+              <img src={product.image} alt={product.name}
+                style={{ width: '100%', height: '200px', objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => navigate(`/product/${product.id}`)}
+              />
+              <div style={{ padding: '16px' }}>
+                <span style={{ fontSize: '11px', backgroundColor: PRIMARY_LIGHT, color: PRIMARY, padding: '3px 10px', borderRadius: '20px', fontWeight: '600' }}>
+                  {categoryIcons[product.category] || '🍽️'} {product.category}
+                </span>
+                <h3 style={{ fontSize: '17px', fontWeight: 'bold', margin: '10px 0 6px', color: '#1f2937' }}>
+                  {product.name}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '14px', height: '38px', overflow: 'hidden' }}>
+                  {product.description}
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <span style={{ fontSize: '22px', fontWeight: 'bold', color: PRIMARY }}>
+                    ₪{product.price.toLocaleString()}
+                  </span>
+                  {product.sold > 0 && (
+                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: '600' }}>
+                      🔥 {product.sold} הוזמנו
+                    </span>
+                  )}
+                </div>
+                <button onClick={() => navigate(`/product/${product.id}`)} style={{
+                  width: '100%', background: 'linear-gradient(135deg, #e8a87c, #c8622a)',
+                  color: 'white', padding: '10px', borderRadius: '50px', border: 'none',
+                  cursor: 'pointer', fontSize: '14px', fontWeight: '600', marginBottom: '8px',
+                  boxShadow: '0 4px 12px rgba(200,98,42,0.3)'
+                }}>
+                  צפה בפרטים
+                </button>
+                {!user?.isAdmin && (
+                  <button onClick={() => handleAddToCart(product)} style={{
+                    width: '100%',
+                    background: addedMap[product.id] ? 'linear-gradient(135deg, #86efac, #16a34a)' : 'white',
+                    color: addedMap[product.id] ? 'white' : PRIMARY,
+                    padding: '10px', borderRadius: '50px',
+                    border: `2px solid ${addedMap[product.id] ? '#16a34a' : PRIMARY}`,
+                    cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.3s'
+                  }}>
+                    {addedMap[product.id] ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
+                  </button>
+                )}
+                {user?.isAdmin && (
+                  <button onClick={() => { setProductToDelete(product); setShowConfirm(true); }}
+                    style={{ width: '100%', background: '#fef2f2', color: '#dc2626', padding: '10px', borderRadius: '50px', border: '2px solid #fca5a5', cursor: 'pointer', fontSize: '14px', fontWeight: '600' }}>
+                    🗑 מחק מנה
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {loading && (
-        <div style={{textAlign: 'center', marginTop: '40px'}}>
-          <p style={{fontSize: '18px', color: '#6b7280'}}>טוען מוצרים...</p>
+      {loading && <div style={{ textAlign: 'center', marginTop: '40px', fontSize: '18px', color: PRIMARY }}>🍽️ טוען תפריט...</div>}
+
+      {sortedProducts.length === 0 && !loading && (
+        <div style={{ textAlign: 'center', marginTop: '60px' }}>
+          <div style={{ fontSize: '60px' }}>🍽️</div>
+          <p style={{ fontSize: '18px', color: '#9ca3af', marginTop: '12px' }}>לא נמצאו מנות</p>
         </div>
       )}
 
       {totalPages > 1 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '10px',
-          marginTop: '40px',
-          padding: '20px'
-        }}>
-          <button
-            onClick={() => { setCurrentPage(prev => Math.max(prev - 1, 1)); window.scrollTo(0, 0); }}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '40px' }}>
+          <button onClick={() => { setCurrentPage(p => Math.max(p - 1, 1)); window.scrollTo({top: 0, behavior: 'smooth'}); }}
             disabled={currentPage === 1}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '6px',
-              fontSize: '14px',
-              backgroundColor: currentPage === 1 ? '#e5e7eb' : '#0891b2',
-              color: currentPage === 1 ? '#9ca3af' : 'white',
-              border: 'none',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-            }}
-          >
+            style={{ padding: '8px 20px', borderRadius: '50px', border: 'none', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', background: currentPage === 1 ? '#e5e7eb' : 'linear-gradient(135deg,#e8a87c,#c8622a)', color: currentPage === 1 ? '#9ca3af' : 'white', fontWeight: '600' }}>
             ← הקודם
           </button>
-          
-          <div style={{display: 'flex', gap: '5px'}}>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => { setCurrentPage(page); window.scrollTo(0, 0); }}
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  backgroundColor: currentPage === page ? '#0891b2' : 'white',
-                  color: currentPage === page ? 'white' : '#374151',
-                  border: currentPage === page ? '1px solid #0891b2' : '1px solid #d1d5db',
-                  fontWeight: currentPage === page ? 'bold' : 'normal',
-                  cursor: 'pointer'
-                }}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-          
-          <button
-            onClick={() => { setCurrentPage(prev => Math.min(prev + 1, totalPages)); window.scrollTo(0, 0); }}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button key={page} onClick={() => { setCurrentPage(page); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+              style={{ padding: '8px 14px', borderRadius: '50px', border: `2px solid ${currentPage === page ? PRIMARY : '#f0e0cc'}`, background: currentPage === page ? PRIMARY : 'white', color: currentPage === page ? 'white' : PRIMARY, fontWeight: 'bold', cursor: 'pointer' }}>
+              {page}
+            </button>
+          ))}
+          <button onClick={() => { setCurrentPage(p => Math.min(p + 1, totalPages)); window.scrollTo({top: 0, behavior: 'smooth'}); }}
             disabled={currentPage === totalPages}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '6px',
-              fontSize: '14px',
-              backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#0891b2',
-              color: currentPage === totalPages ? '#9ca3af' : 'white',
-              border: 'none',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-            }}
-          >
+            style={{ padding: '8px 20px', borderRadius: '50px', border: 'none', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', background: currentPage === totalPages ? '#e5e7eb' : 'linear-gradient(135deg,#e8a87c,#c8622a)', color: currentPage === totalPages ? '#9ca3af' : 'white', fontWeight: '600' }}>
             הבא →
           </button>
         </div>
       )}
 
-      {!loading && (
-        <div style={{
-          textAlign: 'center',
-          marginTop: '20px',
-          color: '#6b7280',
-          fontSize: '14px'
-        }}>
-          מציג {products.length} מתוך {totalProducts} מוצרים (עמוד {currentPage} מתוך {totalPages})
-        </div>
-      )}
-
-      {products.length === 0 && !loading && (
-        <div style={{textAlign: 'center', marginTop: '40px'}}>
-          <p style={{fontSize: '18px', color: '#6b7280'}}>לא נמצאו מוצרים</p>
-        </div>
-      )}
+      </div> {/* end flex content */}
+      </div> {/* end sidebar+products layout */}
 
       <ConfirmDialog
         isOpen={showConfirm}
         onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        title="מחיקת מוצר"
-        message="האם אתה בטוח שברצונך למחוק את המוצר הזה? פעולה זו לא ניתנת לביטול."
+        onCancel={() => { setShowConfirm(false); setProductToDelete(null); }}
+        title="מחיקת מנה"
+        message="האם אתה בטוח שברצונך למחוק את המנה הזו?"
         productName={productToDelete?.name}
       />
     </div>

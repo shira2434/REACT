@@ -1,67 +1,120 @@
 .container {
   display: flex;
+  min-height: 100vh;
+}
+
+.imageSide {
+  flex: 1;
+  background-image: url('https://www.delis.co.il/contentManagment/uploadedFiles/new%20photo%202020%20975/DSC_1138_975_650.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 48px;
+}
+
+.imageSide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(59,26,8,0.85) 0%, rgba(59,26,8,0.2) 60%, transparent 100%);
+}
+
+.imageText {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+
+.imageText h1 {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.imageText p {
+  font-size: 18px;
+  color: rgba(255,255,255,0.8);
+  margin: 0;
+  font-weight: 300;
+}
+
+.formSide {
+  width: 460px;
+  min-width: 460px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0891b2 0%, #0c4a6e 100%);
+  background: #fdf6f0;
+  padding: 48px 40px;
 }
 
 .card {
-  background-color: white;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   width: 100%;
-  max-width: 400px;
-  text-align: center;
+}
+
+.logo {
+  font-size: 36px;
+  margin-bottom: 8px;
 }
 
 .title {
-  font-size: 32px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #3b1a08;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0 0 32px;
 }
 
 .error {
   background-color: #fee2e2;
   border: 1px solid #fca5a5;
   color: #dc2626;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
   margin-bottom: 20px;
+  font-size: 14px;
 }
 
 .field {
-  margin-bottom: 20px;
-  text-align: left;
+  margin-bottom: 18px;
 }
 
 .fieldLast {
-  margin-bottom: 30px;
-  text-align: left;
+  margin-bottom: 28px;
 }
 
 .label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b3a1f;
+  margin-bottom: 6px;
 }
 
 .input {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 16px;
+  padding: 13px 16px;
+  border: 2px solid #e8d5c4;
+  border-radius: 12px;
+  font-size: 15px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  background: white;
+  color: #1f2937;
 }
 
 .input:focus {
-  border-color: #0891b2;
+  border-color: #c8622a;
+  box-shadow: 0 0 0 3px rgba(200,98,42,0.1);
 }
 
 .errorText {
@@ -72,25 +125,28 @@
 
 .button {
   width: 100%;
-  background: linear-gradient(135deg, #0891b2 0%, #0c4a6e 100%);
+  background: linear-gradient(135deg, #e8a87c 0%, #c8622a 100%);
   color: white;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
   margin-bottom: 20px;
-  transition: opacity 0.2s;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(200,98,42,0.35);
 }
 
 .button:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(200,98,42,0.45);
 }
 
 .button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
 }
 
 .footer {
@@ -98,12 +154,17 @@
 }
 
 .link {
-  color: #0891b2;
+  color: #c8622a;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .imageSide { display: none; }
+  .formSide { width: 100%; min-width: unset; }
 }

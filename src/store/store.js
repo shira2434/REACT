@@ -3,8 +3,8 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    currentUser: null,
-    isLoggedIn: false,
+    currentUser: JSON.parse(localStorage.getItem('user') || 'null'),
+    isLoggedIn: !!localStorage.getItem('user'),
     loading: false
   },
   reducers: {
@@ -17,6 +17,8 @@ const userSlice = createSlice({
       state.currentUser = null;
       state.isLoggedIn = false;
       state.loading = false;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     },
     updateUser: (state, action) => {
       state.currentUser = { ...state.currentUser, ...action.payload };
@@ -56,13 +58,72 @@ const cartSlice = createSlice({
   }
 });
 
+const wishlistSlice = createSlice({
+  name: 'wishlist',
+  initialState: { items: JSON.parse(localStorage.getItem('wishlist') || '[]') },
+  reducers: {
+    toggleWishlist: (state, action) => {
+      const idx = state.items.findIndex(i => i.id === action.payload.id);
+      if (idx !== -1) {
+        state.items.splice(idx, 1);
+      } else {
+        state.items.push(action.payload);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(state.items));
+    },
+    clearWishlist: (state) => {
+      state.items = [];
+      localStorage.removeItem('wishlist');
+    }
+  }
+});
+
+const ordersSlice = createSlice({
+  name: 'orders',
+  initialState: { list: JSON.parse(localStorage.getItem('orders') || '[]') },
+  reducers: {
+    addOrder: (state, action) => {
+      state.list.unshift(action.payload);
+      localStorage.setItem('orders', JSON.stringify(state.list));
+    },
+    clearOrders: (state) => {
+      state.list = [];
+      localStorage.removeItem('orders');
+    }
+  }
+});
+
+const toastSlice = createSlice({
+  name: 'toast',
+  initialState: { toasts: [] },
+  reducers: {
+    addToast: (state, action) => {
+      state.toasts.push({
+        id: Date.now(),
+        type: 'info',
+        duration: 3000,
+        ...action.payload
+      });
+    },
+    removeToast: (state, action) => {
+      state.toasts = state.toasts.filter(t => t.id !== action.payload);
+    }
+  }
+});
+
 export const { loginUser, logoutUser, updateUser, setLoading } = userSlice.actions;
 export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
+export const { toggleWishlist, clearWishlist } = wishlistSlice.actions;
+export const { addOrder, clearOrders } = ordersSlice.actions;
+export const { addToast, removeToast } = toastSlice.actions;
 
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
-    cart: cartSlice.reducer
+    cart: cartSlice.reducer,
+    wishlist: wishlistSlice.reducer,
+    orders: ordersSlice.reducer,
+    toast: toastSlice.reducer,
   }
 });
 

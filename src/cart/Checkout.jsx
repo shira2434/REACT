@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { clearCart } from '../store/store';
+import { clearCart, addOrder, addToast } from '../store/store';
 
 const steps = ['פרטי משלוח', 'פרטי תשלום', 'אישור הזמנה'];
 
@@ -45,7 +45,17 @@ const Checkout = () => {
   };
 
   const handlePlaceOrder = () => {
+    const order = {
+      id: orderNumber,
+      date: new Date().toLocaleDateString('he-IL'),
+      items: [...items],
+      total: total + shipping_cost,
+      shipping,
+      status: 'התקבלה'
+    };
+    dispatch(addOrder(order));
     dispatch(clearCart());
+    dispatch(addToast({ type: 'success', message: `ההזמנה #${orderNumber} התקבלה בהצלחה! 🎉`, duration: 5000 }));
     setOrderDone(true);
   };
 

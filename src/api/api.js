@@ -2,9 +2,27 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
+const api = axios.create({ baseURL: API_BASE_URL });
+
+// צרף token לכל בקשה
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
+
+// אם token פג תוקף - נתק
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(err);
+  }
+);
 
 export const authAPI = {
   login: (credentials) => api.post('/login', credentials),

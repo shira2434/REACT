@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import { useState } from 'react';
 import { productsAPI } from '../api/api';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToast } from '../store/store';
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -28,6 +30,7 @@ const validationSchema = Yup.object({
 const AddProduct = () => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -36,16 +39,14 @@ const AddProduct = () => {
         price: parseFloat(values.price),
         stock: parseInt(values.stock)
       });
-      
       if (response.data.success) {
+        dispatch(addToast({ type: 'success', message: `${values.name} נוסף בהצלחה!` }));
         setSuccess(true);
         resetForm();
-        setTimeout(() => {
-          navigate('/home');
-        }, 2000);
+        setTimeout(() => navigate('/home'), 2000);
       }
     } catch (error) {
-      alert('שגיאה בהוספת המוצר');
+      dispatch(addToast({ type: 'error', message: 'שגיאה בהוספת המוצר' }));
     }
     setSubmitting(false);
   };

@@ -1,6 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
 import { reviewsAPI } from '../api/api';
+import { addToast } from '../store/store';
 import './AddReview.css';
 
 const validationSchema = Yup.object({
@@ -14,20 +16,17 @@ const validationSchema = Yup.object({
 });
 
 const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
+  const dispatch = useDispatch();
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await reviewsAPI.addReview({
-        ...values,
-        productId,
-        userId,
-        rating: parseInt(values.rating)
-      });
-      
+      const response = await reviewsAPI.addReview({ ...values, productId, userId, rating: parseInt(values.rating) });
       if (response.data.success) {
+        dispatch(addToast({ type: 'success', message: 'חוות הדעת נוספה בהצלחה! ⭐' }));
         onReviewAdded(response.data.review);
       }
     } catch (error) {
-      alert('שגיאה בהוספת חוות הדעת');
+      dispatch(addToast({ type: 'error', message: 'שגיאה בהוספת חוות הדעת' }));
     }
     setSubmitting(false);
   };
