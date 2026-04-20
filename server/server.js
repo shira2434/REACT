@@ -4,21 +4,25 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
+const axios = require('axios');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://shira:shira@cluster0.balcnsz.mongodb.net/coffeeshop?appName=Cluster0';
-mongoose.connect(MONGO_URI).then(() => console.log('MongoDB connected')).catch(err => console.error('MongoDB error:', err));
+const JSONBIN_BIN_ID = process.env.JSONBIN_BIN_ID;
+const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
 
-const orderSchema = new mongoose.Schema({
-  id: Number,
-  userId: Number,
-  date: String,
-  items: Array,
-  total: Number,
-  shipping: Object,
-  status: String
-});
-const Order = mongoose.model('Order', orderSchema);
+const readOrders = async () => {
+  try {
+    const res = await axios.get(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
+    });
+    return res.data.record.orders || [];
+  } catch { return []; }
+};
+
+const writeOrders = async (orders) => {
+  await axios.put(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, { orders }, {
+    headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Content-Type': 'application/json' }
+  });
+};
 
 const app = express();
 
@@ -202,13 +206,16 @@ app.post('/api/reviews', authMiddleware, (req, res) => {
 // ── Orders ───────────────────────────────────────────────────────────────────
 
 app.get('/api/orders', authMiddleware, async (req, res) => {
-  const orders = await Order.find({ userId: req.user.id }).sort({ _id: -1 });
-  res.json(orders);
+  const orders = await readOrders();
+  res.json(orders.filter(o => o.userId === req.user.id));
 });
 
 app.post('/api/orders', authMiddleware, async (req, res) => {
-  const order = await Order.create({ ...req.body, userId: req.user.id });
-  res.json({ success: true, order });
+  const orders = await readOrders();
+  const newOrder = { ...req.body, userId: req.user.id };
+  orders.unshift(newOrder);
+  await writeOrders(orders);
+  res.json({ success: true, order: newOrder });
 });
 
 // ── Server Start ─────────────────────────────────────────────────────────────
