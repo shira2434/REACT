@@ -46,12 +46,6 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    if (location.state?.category) {
-      setCategory(location.state.category);
-    }
-  }, []);
-
-  useEffect(() => {
     const p = new URLSearchParams();
     if (search) p.set('search', search);
     if (category) p.set('category', category);

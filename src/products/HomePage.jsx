@@ -91,7 +91,7 @@ const HomePage = () => {
           {categories.map(cat => (
             <div
               key={cat.name}
-              onClick={() => navigate('/catalog', { state: { category: cat.name } })}
+              onClick={() => navigate(`/catalog?category=${encodeURIComponent(cat.name)}`)}
               style={{
                 background: 'white',
                 border: '2px solid #f0e0cc',
