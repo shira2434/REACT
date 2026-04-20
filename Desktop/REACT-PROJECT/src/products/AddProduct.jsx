@@ -55,7 +55,7 @@ const AddProduct = () => {
   return (
     <div style={{padding: '20px', marginTop: '40px', maxWidth: '900px', margin: '40px auto 0'}}>
       <div style={{
-        background: 'linear-gradient(135deg, #0891b2 0%, #0c4a6e 100%)',
+        background: 'linear-gradient(135deg, #8b3a1a 0%, #8b3a1a 100%)',
         padding: '40px',
         textAlign: 'center',
         marginBottom: '40px',
