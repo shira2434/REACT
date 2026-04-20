@@ -70,7 +70,7 @@ const AddProduct = () => {
           textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
           margin: '0'
         }}>
-          {/* ➕ הוסף מוצר חדש ➕ */}
+          ➕ הוסף מוצר חדש ➕
         </h1>
         <p style={{
           fontSize: '18px',
