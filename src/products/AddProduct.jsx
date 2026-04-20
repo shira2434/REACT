@@ -51,7 +51,7 @@ const AddProduct = () => {
     setSubmitting(false);
   };
 
-  const categories = ['מחשבים', 'טלפונים', 'אביזרים', 'טאבלטים', 'צילום', 'גיימינג', 'בית חכם'];
+  const categories = ['סלטים', 'פיצות', 'כריכים ולחמים', 'פסטות', 'מרקים', 'קינוחים', 'משקאות'];
 
   return (
     <div style={{padding: '20px', marginTop: '40px', maxWidth: '900px', margin: '40px auto 0'}}>
