@@ -6,17 +6,43 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 3001;
+
+// הגדרת פורט דינמי עבור Render
+const PORT = process.env.PORT || 3001;
 const JWT_SECRET = 'coffee-shop-secret-key-2024';
 
-app.use(cors());
+// הגדרות CORS מעודכנות לחיבור עם Vercel
+app.use(cors({
+  origin: ['https://react-kappa-blue.vercel.app', 'http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
+// נתיב לקובץ הנתונים - ודאי שהקובץ db.json נמצא בתיקייה הראשית ב-GitHub
 const dbPath = path.join(__dirname, 'db.json');
-const readData = () => JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-const writeData = (data) => fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 
-// JWT middleware
+const readData = () => {
+  try {
+    const data = fs.readFileSync(dbPath, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("Error reading db.json:", err);
+    return { users: [], products: [], reviews: [] };
+  }
+};
+
+const writeData = (data) => {
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error("Error writing to db.json:", err);
+  }
+};
+
+// ── Middlewares ──────────────────────────────────────────────────────────────
+
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'אין הרשאה' });
@@ -43,7 +69,7 @@ app.post('/api/login', async (req, res) => {
 
   const isValid = user.password.startsWith('$2')
     ? await bcrypt.compare(password, user.password)
-    : password === user.password; // תמיכה בסיסמאות ישנות
+    : password === user.password;
 
   if (!isValid) return res.status(401).json({ success: false, message: 'אימייל או סיסמה שגויים' });
 
@@ -62,7 +88,7 @@ app.post('/api/register', async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = {
-    id: Math.max(...data.users.map(u => u.id)) + 1,
+    id: data.users.length > 0 ? Math.max(...data.users.map(u => u.id)) + 1 : 1,
     firstName, lastName, email,
     password: hashedPassword,
     phone, address, isAdmin: false
@@ -75,21 +101,31 @@ app.post('/api/register', async (req, res) => {
 
 // ── Products ──────────────────────────────────────────────────────────────────
 
-app.get('/api/products', authMiddleware, (req, res) => {
+app.get('/api/products', (req, res) => {
   const { search, category, page = 1, limit = 20 } = req.query;
   const data = readData();
-  let products = data.products;
+  let products = data.products || [];
 
-  if (search) products = products.filter(p => p.name.includes(search) || p.description.includes(search));
+  if (search) {
+    const s = search.toLowerCase();
+    products = products.filter(p => 
+      p.name.toLowerCase().includes(s) || 
+      p.description.toLowerCase().includes(s)
+    );
+  }
   if (category) products = products.filter(p => p.category === category);
 
   const startIndex = (page - 1) * limit;
   const paginatedProducts = products.slice(startIndex, startIndex + parseInt(limit));
 
-  res.json({ products: paginatedProducts, total: products.length, hasMore: startIndex + parseInt(limit) < products.length });
+  res.json({ 
+    products: paginatedProducts, 
+    total: products.length, 
+    hasMore: startIndex + parseInt(limit) < products.length 
+  });
 });
 
-app.get('/api/products/:id', authMiddleware, (req, res) => {
+app.get('/api/products/:id', (req, res) => {
   const data = readData();
   const product = data.products.find(p => p.id === parseInt(req.params.id));
   product ? res.json(product) : res.status(404).json({ message: 'מוצר לא נמצא' });
@@ -97,7 +133,10 @@ app.get('/api/products/:id', authMiddleware, (req, res) => {
 
 app.post('/api/products', authMiddleware, adminMiddleware, (req, res) => {
   const data = readData();
-  const newProduct = { id: Math.max(...data.products.map(p => p.id)) + 1, ...req.body };
+  const newProduct = { 
+    id: data.products.length > 0 ? Math.max(...data.products.map(p => p.id)) + 1 : 1, 
+    ...req.body 
+  };
   data.products.push(newProduct);
   writeData(data);
   res.json({ success: true, product: newProduct });
@@ -114,9 +153,9 @@ app.delete('/api/products/:id', authMiddleware, adminMiddleware, (req, res) => {
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
-app.get('/api/products/:id/reviews', authMiddleware, (req, res) => {
+app.get('/api/products/:id/reviews', (req, res) => {
   const data = readData();
-  const reviews = data.reviews
+  const reviews = (data.reviews || [])
     .filter(r => r.productId === parseInt(req.params.id))
     .map(review => {
       const user = data.users.find(u => u.id === review.userId);
@@ -128,49 +167,22 @@ app.get('/api/products/:id/reviews', authMiddleware, (req, res) => {
 app.post('/api/reviews', authMiddleware, (req, res) => {
   const data = readData();
   const newReview = {
-    id: Math.max(...data.reviews.map(r => r.id), 0) + 1,
+    id: (data.reviews || []).length > 0 ? Math.max(...data.reviews.map(r => r.id)) + 1 : 1,
     ...req.body,
     date: new Date().toISOString().split('T')[0]
   };
+  if(!data.reviews) data.reviews = [];
   data.reviews.push(newReview);
+  
   const product = data.products.find(p => p.id === newReview.productId);
   if (product) product.sold = (product.sold || 0) + 1;
+  
   writeData(data);
   res.json({ success: true, review: newReview });
 });
 
-app.delete('/api/reviews/:id', authMiddleware, (req, res) => {
-  const data = readData();
-  const idx = data.reviews.findIndex(r => r.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ message: 'חוות דעת לא נמצאה' });
+// ── Server Start ─────────────────────────────────────────────────────────────
 
-  // רק הבעלים יכול למחוק
-  if (data.reviews[idx].userId !== req.user.id && !req.user.isAdmin) {
-    return res.status(403).json({ message: 'אין הרשאה' });
-  }
-
-  data.reviews.splice(idx, 1);
-  writeData(data);
-  res.json({ success: true });
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-// ── Users ─────────────────────────────────────────────────────────────────────
-
-app.put('/api/users/:id', authMiddleware, async (req, res) => {
-  if (req.user.id !== parseInt(req.params.id)) {
-    return res.status(403).json({ message: 'אין הרשאה לעדכן משתמש אחר' });
-  }
-
-  const data = readData();
-  const idx = data.users.findIndex(u => u.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ message: 'משתמש לא נמצא' });
-
-  const { password, ...updates } = req.body;
-  data.users[idx] = { ...data.users[idx], ...updates };
-  writeData(data);
-
-  const { password: _, ...userWithoutPassword } = data.users[idx];
-  res.json({ success: true, user: userWithoutPassword });
-});
-
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

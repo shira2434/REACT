@@ -13,6 +13,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.2",
+    "cors": "^2.8.6",
     "formik": "^2.4.9",
     "generate-react-cli": "^9.1.0",
     "react": "^19.1.1",
