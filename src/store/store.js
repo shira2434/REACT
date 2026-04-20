@@ -78,17 +78,32 @@ const wishlistSlice = createSlice({
   }
 });
 
+const getOrdersForUser = (userId) => {
+  const all = JSON.parse(localStorage.getItem('orders') || '{}');
+  return all[userId] || [];
+};
+
+const saveOrdersForUser = (userId, list) => {
+  const all = JSON.parse(localStorage.getItem('orders') || '{}');
+  all[userId] = list;
+  localStorage.setItem('orders', JSON.stringify(all));
+};
+
+const currentUserId = JSON.parse(localStorage.getItem('user') || 'null')?.id;
+
 const ordersSlice = createSlice({
   name: 'orders',
-  initialState: { list: JSON.parse(localStorage.getItem('orders') || '[]') },
+  initialState: { list: currentUserId ? getOrdersForUser(currentUserId) : [] },
   reducers: {
     addOrder: (state, action) => {
       state.list.unshift(action.payload);
-      localStorage.setItem('orders', JSON.stringify(state.list));
+      saveOrdersForUser(action.payload.userId, state.list);
+    },
+    loadOrders: (state, action) => {
+      state.list = getOrdersForUser(action.payload);
     },
     clearOrders: (state) => {
       state.list = [];
-      localStorage.removeItem('orders');
     }
   }
 });
@@ -114,7 +129,7 @@ const toastSlice = createSlice({
 export const { loginUser, logoutUser, updateUser, setLoading } = userSlice.actions;
 export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 export const { toggleWishlist, clearWishlist } = wishlistSlice.actions;
-export const { addOrder, clearOrders } = ordersSlice.actions;
+export const { addOrder, clearOrders, loadOrders } = ordersSlice.actions;
 export const { addToast, removeToast } = toastSlice.actions;
 
 const store = configureStore({

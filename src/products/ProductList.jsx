@@ -59,14 +59,20 @@ const ProductList = () => {
     if (currentPage > 1) p.set('page', currentPage);
     window.history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
   }, [search, category, sortBy, currentPage]);
-  useEffect(() => { loadProducts(); }, []);
   const isFirstRender = useRef(true);
+  const pageResetRef = useRef(false);
 
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
+    pageResetRef.current = true;
     setCurrentPage(1);
   }, [search, category]);
-  useEffect(() => { loadProducts(); }, [search, category, currentPage]);
+
+  useEffect(() => {
+    if (pageResetRef.current && currentPage !== 1) return;
+    pageResetRef.current = false;
+    loadProducts();
+  }, [search, category, currentPage]);
 
   const loadProducts = async () => {
     setLoading(true);

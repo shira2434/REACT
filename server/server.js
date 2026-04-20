@@ -184,6 +184,23 @@ app.post('/api/reviews', authMiddleware, (req, res) => {
   res.json({ success: true, review: newReview });
 });
 
+// ── Orders ───────────────────────────────────────────────────────────────────
+
+app.get('/api/orders', authMiddleware, (req, res) => {
+  const data = readData();
+  const orders = (data.orders || []).filter(o => o.userId === req.user.id);
+  res.json(orders);
+});
+
+app.post('/api/orders', authMiddleware, (req, res) => {
+  const data = readData();
+  if (!data.orders) data.orders = [];
+  const newOrder = { ...req.body, userId: req.user.id };
+  data.orders.unshift(newOrder);
+  writeData(data);
+  res.json({ success: true, order: newOrder });
+});
+
 // ── Server Start ─────────────────────────────────────────────────────────────
 
 app.listen(PORT, () => {

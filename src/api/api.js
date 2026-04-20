@@ -47,4 +47,9 @@ export const usersAPI = {
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
 };
 
+export const ordersAPI = {
+  getOrders: () => api.get('/orders'),
+  addOrder: (order) => api.post('/orders', order),
+};
+
 export default api;

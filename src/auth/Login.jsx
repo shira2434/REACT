@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { authAPI } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../store/store';
+import { loginUser, loadOrders } from '../store/store';
 import styles from './Login.module.css';
 
 const validationSchema = Yup.object({
@@ -25,6 +25,7 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
         dispatch(loginUser(response.data.user));
+        dispatch(loadOrders(response.data.user.id));
         navigate('/home', { replace: true });
       }
     } catch (err) {
