@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearCart, addOrder, addToast } from '../store/store';
 import emailjs from '@emailjs/browser';
+import Confetti from '../components/Confetti';
 
 const steps = ['פרטי משלוח', 'פרטי תשלום', 'אישור הזמנה'];
 
@@ -14,7 +15,9 @@ const Checkout = () => {
 
   const [step, setStep] = useState(0);
   const [orderDone, setOrderDone] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [orderNumber] = useState(() => Math.floor(100000 + Math.random() * 900000));
+  const [formError, setFormError] = useState('');
 
   const [shipping, setShipping] = useState({
     firstName: user?.firstName || '',
@@ -78,6 +81,7 @@ const Checkout = () => {
       console.error('emailjs error', e);
     }
 
+    setShowConfetti(true);
     setOrderDone(true);
   };
 
@@ -88,7 +92,9 @@ const Checkout = () => {
 
   if (orderDone) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', textAlign: 'center', padding: '20px' }}>
+      <>
+    <Confetti active={showConfetti} />
+    <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', textAlign: 'center', padding: '20px' }}>
         <div style={{ fontSize: '80px' }}>🎉</div>
         <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937' }}>ההזמנה התקבלה!</h1>
         <p style={{ fontSize: '18px', color: '#6b7280' }}>תודה על הקנייה, {shipping.firstName}!</p>
@@ -104,6 +110,7 @@ const Checkout = () => {
           חזור לחנות
         </button>
       </div>
+    </>
     );
   }
 
@@ -238,6 +245,11 @@ const Checkout = () => {
               </>
             )}
 
+            {formError && (
+              <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '8px', color: '#dc2626', fontSize: '14px' }}>
+                ⚠️ {formError}
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '28px' }}>
               {step > 0 && (
                 <button
@@ -249,8 +261,9 @@ const Checkout = () => {
               )}
               <button
                 onClick={() => {
-                  if (step === 0 && !isShippingValid()) return alert('יש למלא את כל פרטי המשלוח');
-                  if (step === 1 && !isPaymentValid()) return alert('יש למלא את כל פרטי התשלום בצורה תקינה');
+                  if (step === 0 && !isShippingValid()) { setFormError('יש למלא את כל פרטי המשלוח'); return; }
+                  if (step === 1 && !isPaymentValid()) { setFormError('יש למלא את כל פרטי התשלום בצורה תקינה'); return; }
+                  setFormError('');
                   step < 2 ? setStep(s => s + 1) : handlePlaceOrder();
                 }}
                 style={{ marginRight: step === 0 ? 'auto' : '0', padding: '12px 28px', borderRadius: '10px', border: 'none', backgroundColor: '#0891b2', color: 'white', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold' }}

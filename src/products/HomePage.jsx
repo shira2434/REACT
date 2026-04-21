@@ -9,6 +9,7 @@ const categories = [
   { name: "בוקר ובראנץ'",    img: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80', desc: 'ארוחות בוקר עשירות' },
   { name: 'קינוחים',         img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&q=80', desc: 'קינוחים מפנקים ומתוקים' },
   { name: 'שתייה',           img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80', desc: 'משקאות קרים וחמים' },
+  { name: 'סושי',             img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80', desc: 'סושי טרי ומגוון' },
 ];
 
 const HomePage = () => {

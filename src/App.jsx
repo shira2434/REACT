@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import Toast from './components/Toast';
 import ChatBot from './components/ChatBot';
+import ScrollToTopBtn from './components/ScrollToTopBtn';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <AppRoutes />
         <Toast />
         <ChatBot />
+        <ScrollToTopBtn />
       </div>
     </BrowserRouter>
   );

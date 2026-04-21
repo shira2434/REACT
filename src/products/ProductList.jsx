@@ -107,10 +107,10 @@ const ProductList = () => {
   const categoryIcons = {
     'סלטים': '🥗', 'פיצות': '🍕', 'כריכים ולחמים': '🥙',
     'פסטות': '🍝', 'מנות גבינות': '🧀', 'בוקר ובראנץ\'': '🥞',
-    'קינוחים': '🍰', 'שתייה': '🥤'
+    'קינוחים': '🍰', 'שתייה': '🥤', 'סושי': '🍣'
   };
 
-  const categories = ['סלטים', 'פיצות', 'כריכים ולחמים', 'פסטות', 'מנות גבינות', "בוקר ובראנץ'", 'קינוחים', 'שתייה'];
+  const categories = ['סלטים', 'פיצות', 'כריכים ולחמים', 'פסטות', 'מנות גבינות', "בוקר ובראנץ'", 'קינוחים', 'שתייה', 'סושי'];
 
   const maxPrice = 200;
 
@@ -234,6 +234,22 @@ const ProductList = () => {
                 }}>
                   {isWishlisted ? '❤️' : '🤍'}
                 </button>
+              )}
+              {product.sold > 100 && (
+                <div style={{
+                  position: 'absolute', top: '12px', left: '12px', zIndex: 1,
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white', padding: '4px 10px', borderRadius: '50px',
+                  fontSize: '11px', fontWeight: '700',
+                }}>🔥 פופולרי</div>
+              )}
+              {product.sold < 20 && (
+                <div style={{
+                  position: 'absolute', top: '12px', left: '12px', zIndex: 1,
+                  background: 'linear-gradient(135deg, #34d399, #059669)',
+                  color: 'white', padding: '4px 10px', borderRadius: '50px',
+                  fontSize: '11px', fontWeight: '700',
+                }}>✨ חדש</div>
               )}
               <img src={product.image} alt={product.name}
                 style={{ width: '100%', height: '200px', objectFit: 'cover', cursor: 'pointer' }}
