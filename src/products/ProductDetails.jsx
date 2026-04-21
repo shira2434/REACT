@@ -4,6 +4,9 @@ import { productsAPI, reviewsAPI } from '../api/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, toggleWishlist, addToast } from '../store/store';
 import AddReview from '../reviews/AddReview';
+import CustomizeModal from './CustomizeModal';
+
+const CUSTOMIZABLE = ['פסטות', 'פיצות', 'סושי', 'סלטים'];
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -15,14 +18,16 @@ const ProductDetails = () => {
   const [user, setUser] = useState(null);
   const [showAddReview, setShowAddReview] = useState(false);
   const [added, setAdded] = useState(false);
+  const [showCustomize, setShowCustomize] = useState(false);
   const dispatch = useDispatch();
 
   const wishlistItems = useSelector(state => state.wishlist.items);
   const isWishlisted = product ? wishlistItems.some(i => i.id === product.id) : false;
 
-  const handleAddToCart = () => {
-    dispatch(addToCart(product));
-    dispatch(addToast({ type: 'success', message: `${product.name} נוסף לסל!` }));
+  const handleAddToCart = (customProduct) => {
+    const p = customProduct || product;
+    dispatch(addToCart(p));
+    dispatch(addToast({ type: 'success', message: `${p.name} נוסף לסל!` }));
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -157,6 +162,19 @@ const ProductDetails = () => {
                 >
                   {added ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
                 </button>
+                {CUSTOMIZABLE.includes(product.category) && (
+                  <button
+                    onClick={() => setShowCustomize(true)}
+                    style={{
+                      background: `linear-gradient(135deg, #e8a87c, #c8622a)`,
+                      color: 'white', padding: '12px 24px', borderRadius: '12px',
+                      border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold',
+                      boxShadow: '0 4px 16px rgba(200,98,42,0.35)',
+                    }}
+                  >
+                    🎨 התאם אישית
+                  </button>
+                )}
                 <button
                   onClick={handleToggleWishlist}
                   style={{
@@ -262,6 +280,13 @@ const ProductDetails = () => {
             userId={user.id}
             onReviewAdded={handleReviewAdded}
             onClose={() => setShowAddReview(false)}
+          />
+        )}
+        {showCustomize && (
+          <CustomizeModal
+            product={product}
+            onClose={() => setShowCustomize(false)}
+            onAddToCart={handleAddToCart}
           />
         )}
       </div>
