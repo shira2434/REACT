@@ -8,7 +8,7 @@ const categories = [
   { name: 'מנות גבינות',        img: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?w=600&q=80', desc: 'גבינות מובחרות ומנות חלביות', emoji: '🧀' },
   { name: "בוקר ובראנץ'",       img: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80', desc: 'ארוחות בוקר עשירות', emoji: '🥞' },
   { name: 'סלטים',              img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80', desc: 'סלטים טריים ומרעננים', emoji: '🥗' },
-  { name: 'מרקים',              img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80', desc: 'מרקים חמים וטעימים', emoji: '🍲' },
+  { name: 'מרקים',              img: 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=600&q=80', desc: 'מרקים חמים וטעימים', emoji: '🍲' },
   { name: 'כריכים ולחמים',      img: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&q=80', desc: 'כריכים ביתיים ולחמים טריים', emoji: '🥙' },
   { name: 'קינוחים',            img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80', desc: 'קינוחים מפנקים ומתוקים', emoji: '🍰' },
   { name: 'בר יין וקוקטיילים',  img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80', desc: 'יינות מובחרים וקוקטיילים', emoji: '🍷' },
