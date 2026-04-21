@@ -92,7 +92,7 @@ const Cart = () => {
               onClick={() => navigate('/home')}
               style={{ width: '100%', backgroundColor: 'transparent', color: '#6b7280', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', cursor: 'pointer', fontSize: '14px', marginTop: '10px' }}
             >
-              ← המשך לקנות
+              ← המשך בקניה
             </button>
           </div>
         </div>
