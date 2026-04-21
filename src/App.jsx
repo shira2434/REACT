@@ -1,6 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import Toast from './components/Toast';
+import ChatBot from './components/ChatBot';
 import './App.css';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <div className="App min-h-screen bg-gray-50">
         <AppRoutes />
         <Toast />
+        <ChatBot />
       </div>
     </BrowserRouter>
   );

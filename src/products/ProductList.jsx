@@ -291,7 +291,22 @@ const ProductList = () => {
         })}
       </div>
 
-      {loading && <div style={{ textAlign: 'center', marginTop: '40px', fontSize: '18px', color: PRIMARY }}>🍽️ טוען תפריט...</div>}
+      {loading && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} style={{ borderRadius: '20px', overflow: 'hidden', border: '2px solid #f0e0cc' }}>
+              <div className="skeleton" style={{ height: '200px', borderRadius: 0 }} />
+              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className="skeleton" style={{ height: '16px', width: '60%' }} />
+                <div className="skeleton" style={{ height: '20px', width: '80%' }} />
+                <div className="skeleton" style={{ height: '14px', width: '100%' }} />
+                <div className="skeleton" style={{ height: '14px', width: '70%' }} />
+                <div className="skeleton" style={{ height: '40px', marginTop: '8px' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {sortedProducts.length === 0 && !loading && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>

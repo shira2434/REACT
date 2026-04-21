@@ -1,90 +1,153 @@
-// קובץ עיצוב SASS לפרויקט
-// משתנים גלובליים
-$primary-color: #667eea;
-$secondary-color: #764ba2;
-$success-color: #10b981;
-$error-color: #dc2626;
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-// מיקסין לכפתורים
-@mixin button-style($bg-color: $primary-color) {
-  background-color: $bg-color;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes cartBounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.3); }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* ===== PRODUCT CARDS ===== */
+.product-card {
+  animation: fadeInUp 0.5s ease both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+
   &:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
+    transform: translateY(-8px) !important;
+    box-shadow: 0 20px 50px rgba(200, 98, 42, 0.2) !important;
+
+    img {
+      transform: scale(1.05);
+    }
+  }
+
+  img {
+    transition: transform 0.4s ease;
   }
 }
 
-// עיצוב כרטיסים
-.card {
-  background-color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  padding: 40px;
-  
-  &__header {
-    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
-    padding: 30px;
-    text-align: center;
-    margin-bottom: 30px;
-    border-radius: 15px;
-    
-    h2 {
-      color: white;
-      font-size: 32px;
-      font-weight: bold;
-      margin: 0;
+/* stagger delay for cards */
+.product-card:nth-child(1)  { animation-delay: 0.05s; }
+.product-card:nth-child(2)  { animation-delay: 0.10s; }
+.product-card:nth-child(3)  { animation-delay: 0.15s; }
+.product-card:nth-child(4)  { animation-delay: 0.20s; }
+.product-card:nth-child(5)  { animation-delay: 0.25s; }
+.product-card:nth-child(6)  { animation-delay: 0.30s; }
+.product-card:nth-child(7)  { animation-delay: 0.35s; }
+.product-card:nth-child(8)  { animation-delay: 0.40s; }
+.product-card:nth-child(9)  { animation-delay: 0.45s; }
+.product-card:nth-child(10) { animation-delay: 0.50s; }
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+  background: linear-gradient(90deg, #f0e0cc 25%, #fdf3ec 50%, #f0e0cc 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  animation: fadeInDown 0.4s ease;
+
+  a {
+    position: relative;
+    transition: background 0.2s ease !important;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 50%;
+      width: 0; height: 2px;
+      background: rgba(255,255,255,0.8);
+      transition: all 0.25s ease;
+      transform: translateX(-50%);
     }
+
+    &:hover::after { width: 70%; }
   }
 }
 
-// עיצוב טפסים
-.form {
-  display: grid;
-  gap: 20px;
-  
-  &__group {
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 5px;
-    }
-    
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-  }
-  
-  &__submit {
-    @include button-style;
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
+/* ===== HERO FLOAT ===== */
+.hero-emoji {
+  animation: float 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* ===== CATEGORY CARDS ===== */
+.category-card {
+  animation: scaleIn 0.4s ease both;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.10s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.20s; }
+  &:nth-child(5) { animation-delay: 0.25s; }
+  &:nth-child(6) { animation-delay: 0.30s; }
+  &:nth-child(7) { animation-delay: 0.35s; }
+  &:nth-child(8) { animation-delay: 0.40s; }
+}
+
+/* ===== CART BOUNCE ===== */
+.cart-bounce {
+  animation: cartBounce 0.4s ease;
+}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page-enter {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* ===== BUTTONS ===== */
+button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+
+  &:active:not(:disabled) {
+    transform: scale(0.97) !important;
   }
 }
 
-// עיצוב כפתורים
-.btn {
-  @include button-style;
-  
-  &--success {
-    @include button-style($success-color);
-  }
-  
-  &--error {
-    @include button-style($error-color);
-  }
+/* ===== INPUTS FOCUS ===== */
+input, select, textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fdf6f0; }
+::-webkit-scrollbar-thumb { background: #e8a87c; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #c8622a; }

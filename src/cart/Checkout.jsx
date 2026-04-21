@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearCart, addOrder, addToast } from '../store/store';
+import emailjs from '@emailjs/browser';
 
 const steps = ['פרטי משלוח', 'פרטי תשלום', 'אישור הזמנה'];
 
@@ -44,7 +45,7 @@ const Checkout = () => {
     return clean.length >= 3 ? clean.slice(0, 2) + '/' + clean.slice(2) : clean;
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     const order = {
       id: orderNumber,
       userId: user?.id,
@@ -57,6 +58,26 @@ const Checkout = () => {
     dispatch(addOrder(order));
     dispatch(clearCart());
     dispatch(addToast({ type: 'success', message: `ההזמנה #${orderNumber} התקבלה בהצלחה! 🎉`, duration: 5000 }));
+
+    const orderItems = items.map(i => `${i.name} × ${i.quantity} — ₪${(i.price * i.quantity).toLocaleString()}`).join('\n');
+    try {
+      await emailjs.send(
+        'service_k7s01se',
+        'template_iyprvm8',
+        {
+          customer_name: `${shipping.firstName} ${shipping.lastName}`,
+          to_email: shipping.email,
+          order_id: orderNumber,
+          order_items: orderItems,
+          total_price: (total + shipping_cost).toLocaleString(),
+          address: `${shipping.address}, ${shipping.city}`,
+        },
+        'Msl7gvtuWwferlS3G'
+      );
+    } catch (e) {
+      console.error('emailjs error', e);
+    }
+
     setOrderDone(true);
   };
 

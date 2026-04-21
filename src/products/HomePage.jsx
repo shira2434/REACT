@@ -49,7 +49,7 @@ const HomePage = () => {
           zIndex: 1,
         }} />
         <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ fontSize: '64px', marginBottom: '16px' }}>☕</div>
+          <div className="hero-emoji" style={{ fontSize: '64px', marginBottom: '16px' }}>☕</div>
           <h1 style={{ fontSize: '52px', fontWeight: '800', color: 'white', margin: '0 0 12px', letterSpacing: '-1px', textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}>
             לה קוצ'ינה
           </h1>
@@ -91,6 +91,7 @@ const HomePage = () => {
           {categories.map(cat => (
             <div
               key={cat.name}
+              className="category-card"
               onClick={() => navigate(`/catalog?category=${encodeURIComponent(cat.name)}`)}
               style={{
                 background: 'white',
