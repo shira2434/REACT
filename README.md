@@ -1,5 +1,6 @@
 # ☕ Coffee Shop
 
+קישור לאתר:https://shira-fullstack-project.vercel.app/login
 אפליקציית חנות קפה מלאה עם צד לקוח ב-React וצד שרת ב-Node.js/Express.
 
 ---
