@@ -741,10 +741,10 @@
     { "id": 96, "name": "קוקטייל מרגריטה", "category": "בר יין וקוקטיילים", "price": 52, "description": "מרגריטה קלאסית עם טקילה, ליים ומלח", "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop", "stock": 40, "sold": 175 },
     { "id": 97, "name": "בקבוק יין לשולחן", "category": "בר יין וקוקטיילים", "price": 120, "description": "בקבוק יין לבחירה: לבן, אדום או רוזה", "image": "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&h=300&fit=crop", "stock": 30, "sold": 88 },
     { "id": 98, "name": "מרק עגבניות ביתי", "category": "מרקים", "price": 38, "description": "מרק עגבניות טרי עם בזיליקום ושמנת, מוגש עם לחם", "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop", "stock": 25, "sold": 145 },
-    { "id": 99, "name": "מרק בצל צרפתי", "category": "מרקים", "price": 44, "description": "מרק בצל קלאסי עם גבינת גרויר מגורדת ולחם קלוי", "image": "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&h=300&fit=crop", "stock": 20, "sold": 98 },
-    { "id": 100, "name": "מינסטרונה", "category": "מרקים", "price": 42, "description": "מרק ירקות איטלקי עשיר עם פסטה וגבינת פרמזן", "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop", "stock": 22, "sold": 112 },
+    { "id": 99, "name": "מרק בצל צרפתי", "category": "מרקים", "price": 44, "description": "מרק בצל קלאסי עם גבינת גרויר מגורדת ולחם קלוי", "image": "https://happykitchen.co.il/wp-content/uploads/2023/11/%D7%9E%D7%A8%D7%A7-%D7%91%D7%A6%D7%9C-%D7%A8%D7%95%D7%97%D7%91-1-scaled.jpg", "stock": 20, "sold": 98 },
+    { "id": 100, "name": "מינסטרונה", "category": "מרקים", "price": 42, "description": "מרק ירקות איטלקי עשיר עם פסטה וגבינת פרמזן", "image": "https://i.pinimg.com/736x/17/5a/a3/175aa34c88610b1a072684e56061013f.jpg", "stock": 22, "sold": 112 },
     { "id": 101, "name": "קרם דלעת", "category": "מרקים", "price": 40, "description": "מרק קרם דלעת חלק עם שמנת, ג'ינג'ר וזרעי דלעת", "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop", "stock": 24, "sold": 130 },
-    { "id": 102, "name": "מרק פטריות", "category": "מרקים", "price": 46, "description": "מרק קרם פטריות עשיר עם שמנת, שום ועשבי תיבול", "image": "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop", "stock": 20, "sold": 88 }
+    { "id": 102, "name": "מרק פטריות", "category": "מרקים", "price": 46, "description": "מרק קרם פטריות עשיר עם שמנת, שום ועשבי תיבול", "image": "https://sweetscent.co.il/wp-content/uploads/creamy-mushroom-soup-recipe-1-1024x590.jpeg", "stock": 20, "sold": 88 }
   ],
   "reviews": [
     {
