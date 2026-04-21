@@ -721,7 +721,13 @@
       "image": "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=400&h=300&fit=crop",
       "stock": 45,
       "sold": 180
-    }
+    },
+    { "id": 80, "name": "סשי מיקס 8 יחידות", "category": "סושי", "price": 58, "description": "מבחר סשי טרי עם דג סלמון, טונה וירקות", "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop", "stock": 20, "sold": 95 },
+    { "id": 81, "name": "רולים קליפורניה 8 יחידות", "category": "סושי", "price": 52, "description": "רולים עם סרטן, אבוקדו, מלפפון ורוטב ספיסי", "image": "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&h=300&fit=crop", "stock": 18, "sold": 120 },
+    { "id": 82, "name": "סשימי סלמון", "category": "סושי", "price": 48, "description": "סשימי עם דג סלמון טרי, אורז וואסבי", "image": "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&h=300&fit=crop", "stock": 15, "sold": 80 },
+    { "id": 83, "name": "מאקי טונה 8 יחידות", "category": "סושי", "price": 46, "description": "מאקי עם טונה, מיונז ספיסי ומלפפון", "image": "https://images.unsplash.com/photo-1562802378-063ec186a863?w=400&h=300&fit=crop", "stock": 22, "sold": 110 },
+    { "id": 84, "name": "פלטת סושי משפחתית", "category": "סושי", "price": 120, "description": "40 יחידות מגוון: סשימי, מאקי, רולים ונגירי", "image": "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&h=300&fit=crop", "stock": 10, "sold": 65 },
+    { "id": 85, "name": "נגירי סלמון 8 יחידות", "category": "סושי", "price": 54, "description": "נגירי עם דג סלמון, אבוקדו וצנונית", "image": "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=400&h=300&fit=crop", "stock": 16, "sold": 88 }
   ],
   "reviews": [
     {
