@@ -10,6 +10,9 @@ const categories = [
   { name: 'קינוחים',         img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&q=80', desc: 'קינוחים מפנקים ומתוקים' },
   { name: 'שתייה',           img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80', desc: 'משקאות קרים וחמים' },
   { name: 'סושי',             img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80', desc: 'סושי טרי ומגוון' },
+  { name: 'דגים',              img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80', desc: 'דגים טריים ומנות ים' },
+  { name: 'בר יין וקוקטיילים', img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80', desc: 'יינות מובחרים וקוקטיילים' },
+  { name: 'מרקים',             img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80', desc: 'מרקים חמים וטעימים' },
 ];
 
 const HomePage = () => {
