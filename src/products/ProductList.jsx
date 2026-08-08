@@ -166,7 +166,7 @@ const ProductList = () => {
 
       <PageParagraphs page="catalog" slot="top" />
 
-      {/* layout: sidebar + מוצרים */}}
+      {/* layout: sidebar + מוצרים */}
       <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
 
         {/* Sidebar */}

@@ -112,7 +112,7 @@ const HomePage = () => {
         <PageParagraphs page="home" slot="after_hero" />
       </div>
 
-      {/* קטגוריות */}}
+      {/* קטגוריות */}
       <div id="categories" style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>
           <h2 {...editable('categoriesTitle')} style={{ fontSize: '36px', fontWeight: '800', color: s.secondaryColor, margin: '0 0 10px' }}>
