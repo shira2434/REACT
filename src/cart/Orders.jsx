@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useEditMode } from '../admin/EditModeContext';
+import { useEditMode, PageParagraphs } from '../admin/EditModeContext';
 
 const statusColors = {
   'התקבלה': { bg: '#f0fdf4', color: '#166534', border: '#86efac' },
@@ -34,6 +34,7 @@ const Orders = () => {
   return (
     <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px', paddingTop: active ? '72px' : 0, paddingRight: active && panelOpen ? '340px' : '20px', transition: 'padding-right 0.3s' }}>
       <h1 {...ed('ordersTitle')} style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '30px', color: '#1f2937' }}>{s.ordersTitle || '📦 ההזמנות שלי'}</h1>
+      <PageParagraphs page="orders" slot="top" />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {orders.map(order => {
           const sc = statusColors[order.status] || statusColors['התקבלה'];
@@ -85,6 +86,7 @@ const Orders = () => {
           );
         })}
       </div>
+      <PageParagraphs page="orders" slot="bottom" />
     </div>
   );
 };

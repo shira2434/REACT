@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { removeFromCart, updateQuantity } from '../store/store';
-import { useEditMode } from '../admin/EditModeContext';
+import { useEditMode, PageParagraphs } from '../admin/EditModeContext';
 
 const Cart = () => {
   const { items } = useSelector(state => state.cart);
@@ -32,6 +32,8 @@ const Cart = () => {
   return (
     <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px', paddingTop: active ? '72px' : 0, paddingRight: active && panelOpen ? '340px' : '20px', transition: 'padding-right 0.3s' }}>
       <h1 {...ed('cartTitle')} style={{ fontSize: '32px', fontWeight: '800', marginBottom: '30px', color: '#3b1a08' }}>{s.cartTitle || '🛒 סל הקניות שלי'}</h1>
+
+      <PageParagraphs page="cart" slot="top" />
 
       <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
         {/* Items */}
@@ -101,6 +103,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
+      <PageParagraphs page="cart" slot="bottom" />
     </div>
   );
 };

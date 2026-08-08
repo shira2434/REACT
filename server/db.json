@@ -178,7 +178,7 @@
       "category": "פיצות",
       "price": 74,
       "description": "בסיס שמנת, תרד טרי, ביצה אפויה, מוצרלה ואגוז מוסקט",
-      "image": "https://th.bing.com/th/id/R.c856ddffccc6070eac529394ce156e7a?rik=mO%2boGI5bgY%2bYvQ&riu=http%3a%2f%2fmatkonkal.co.il%2fstatic%2fimages%2frecipe_6343.webp&ehk=NFVFAXOVEtSJGxzZjDNDRuAuZB3GiMmpvUiFl0JKsEE%3d&risl=&pid=ImgRaw&r=0",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
       "stock": 12,
       "sold": 62
     },
@@ -338,7 +338,7 @@
       "category": "מנות גבינות",
       "price": 88,
       "description": "פונדו שוויצרי עם גרויר ואמנטל, מוגש עם לחם וירקות לטבילה",
-      "image": "https://th.bing.com/th/id/OIP.dQ_IeiiAo9rpc4PrGc-XJwHaD8?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3",
+      "image": "https://images.unsplash.com/photo-1559561853-08451507cbe7?w=400&h=300&fit=crop",
       "stock": 10,
       "sold": 42
     },
@@ -578,7 +578,7 @@
       "category": "סלטים",
       "price": 38,
       "description": "חומוס חם עם טחינה, שום, פפריקה ושמן זית",
-      "image": "https://th.bing.com/th/id/R.c9837858cbed3d0c3b7fa0ac7c7fc09b?rik=cz0c%2boQ4HNR9AQ&pid=ImgRaw&r=0",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
       "stock": 25,
       "sold": 140
     },
@@ -698,7 +698,7 @@
       "category": "קינוחים",
       "price": 38,
       "description": "עוגת שוקולד חמה עם לב נוזלי",
-      "image": "https://th.bing.com/th/id/R.6d1d1662fe69996e54c7b6704f6588ae?rik=c%2baT6pwUnRelOw&pid=ImgRaw&r=0",
+      "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop",
       "stock": 18,
       "sold": 170
     },
@@ -1113,6 +1113,7 @@
     "categoriesSubtitle": "בחר קטגוריה לצפייה במנות",
     "heroTagline": "✨ בחר קטגוריה וגלה את התפריט שלנו!",
     "heroBtnText": "צפה בכל התפריט →",
-    "catName_פיצות": ""
+    "catName_פיצות": "",
+    "paragraphs": "[]"
   }
 }

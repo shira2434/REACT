@@ -184,6 +184,9 @@ const PANEL_SECTIONS = [
     ]
   },
   {
+    id: 'paragraphs', label: '📝 פסקאות', fields: []
+  },
+  {
     id: 'notfound', label: '🔍 404', fields: [
       { key: 'notFoundEmoji', label: 'אמוגי',         type: 'text' },
       { key: 'notFoundTitle', label: 'כותרת',         type: 'text' },
@@ -357,11 +360,13 @@ function EditPanel({ open, section, setSection, settings, onSave, saving }) {
 
       {/* Search */}
       <div style={{ padding: '10px 10px 0', background: '#1e293b' }}>
-        <input
-          value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="🔍 חיפוש שדה..."
-          style={{ width: '100%', padding: '7px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none', boxSizing: 'border-box' }}
-        />
+        {section !== 'paragraphs' && (
+          <input
+            value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="🔍 חיפוש שדה..."
+            style={{ width: '100%', padding: '7px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none', boxSizing: 'border-box' }}
+          />
+        )}
       </div>
 
       {/* Tabs */}
@@ -375,7 +380,8 @@ function EditPanel({ open, section, setSection, settings, onSave, saving }) {
 
       {/* Fields */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {visibleFields?.length === 0 && (
+        {section === 'paragraphs' && <ParagraphsEditor settings={settings} onSave={onSave} />}
+        {section !== 'paragraphs' && visibleFields?.length === 0 && (
           <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px', textAlign: 'center', marginTop: '20px' }}>אין תוצאות</p>
         )}
         {visibleFields?.map(field => (
@@ -426,6 +432,122 @@ function EditPanel({ open, section, setSection, settings, onSave, saving }) {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+export function PageParagraphs({ page, slot }) {
+  const { settings } = useEditMode() || {};
+  try {
+    const paras = JSON.parse(settings?.paragraphs || '[]').filter(p => p.page === page && (p.slot || 'bottom') === slot);
+    if (!paras.length) return null;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', margin: '32px 0' }}>
+        {paras.map((p, i) => (
+          <div key={i} style={{ background: 'white', borderRadius: '20px', padding: '28px 32px', boxShadow: '0 4px 16px rgba(200,98,42,0.08)', border: '2px solid #f0e0cc' }}>
+            {p.title && <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#3b1a08', margin: '0 0 10px' }}>{p.title}</h2>}
+            <p style={{ fontSize: '15px', color: '#6b7280', lineHeight: '1.8', margin: 0, whiteSpace: 'pre-wrap' }}>{p.text}</p>
+          </div>
+        ))}
+      </div>
+    );
+  } catch { return null; }
+}
+
+const PAGE_OPTIONS = [
+  { value: 'home',     label: '🏠 דף הבית',  slots: [{ value: 'after_hero', label: 'אחרי ה-Hero' }, { value: 'after_categories', label: 'אחרי הקטגוריות' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+  { value: 'catalog',  label: '🍽️ תפריט',   slots: [{ value: 'top', label: 'מעל המוצרים' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+  { value: 'cart',     label: '🛒 עגלה',     slots: [{ value: 'top', label: 'ראש העמוד' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+  { value: 'orders',   label: '📦 הזמנות',   slots: [{ value: 'top', label: 'ראש העמוד' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+  { value: 'profile',  label: '👤 פרופיל',   slots: [{ value: 'top', label: 'ראש העמוד' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+  { value: 'wishlist', label: '❤️ מועדפים',  slots: [{ value: 'top', label: 'ראש העמוד' }, { value: 'bottom', label: 'תחתית העמוד' }] },
+];
+
+function ParagraphsEditor({ settings, onSave }) {
+  const parseParagraphs = () => { try { return JSON.parse(settings.paragraphs || '[]'); } catch { return []; } };
+  const [paragraphs, setParagraphs] = useState(parseParagraphs);
+  const [editing, setEditing] = useState(null);
+
+  useEffect(() => { setParagraphs(parseParagraphs()); }, [settings.paragraphs]);
+
+  const persist = async (updated) => {
+    setParagraphs(updated);
+    await onSave('paragraphs', JSON.stringify(updated));
+  };
+
+  const handleSave = async () => {
+    if (!editing) return;
+    const { _new, idx, ...data } = editing;
+    const updated = _new ? [...paragraphs, data] : paragraphs.map((p, i) => i === idx ? data : p);
+    await persist(updated);
+    setEditing(null);
+  };
+
+  const handleDelete = async (idx) => {
+    if (!window.confirm('למחוק פסקאה זו?')) return;
+    await persist(paragraphs.filter((_, i) => i !== idx));
+  };
+
+  const inputStyle = { width: '100%', padding: '8px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'white', fontSize: '13px', outline: 'none', boxSizing: 'border-box' };
+  const currentPageSlots = PAGE_OPTIONS.find(o => o.value === editing?.page)?.slots || [];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <button onClick={() => setEditing({ _new: true, title: '', text: '', page: 'home', slot: 'bottom' })}
+        style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px dashed rgba(200,98,42,0.5)', background: 'rgba(200,98,42,0.08)', color: '#e8a87c', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}>
+        ➕ הוסף פסקאה
+      </button>
+
+      {editing && (
+        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '14px', border: '1px solid rgba(200,98,42,0.3)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '700', textTransform: 'uppercase' }}>עמוד</label>
+          <select value={editing.page} onChange={e => setEditing(p => ({ ...p, page: e.target.value, slot: PAGE_OPTIONS.find(o => o.value === e.target.value)?.slots[0]?.value || 'bottom' }))}
+            style={{ ...inputStyle, background: '#1e293b' }}>
+            {PAGE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '700', textTransform: 'uppercase' }}>מיקום בעמוד</label>
+          <select value={editing.slot || 'bottom'} onChange={e => setEditing(p => ({ ...p, slot: e.target.value }))}
+            style={{ ...inputStyle, background: '#1e293b' }}>
+            {currentPageSlots.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '700', textTransform: 'uppercase' }}>כותרת</label>
+          <input value={editing.title} onChange={e => setEditing(p => ({ ...p, title: e.target.value }))} style={inputStyle} placeholder="כותרת הפסקאה..." />
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '700', textTransform: 'uppercase' }}>טקסט</label>
+          <textarea value={editing.text} onChange={e => setEditing(p => ({ ...p, text: e.target.value }))} rows={4}
+            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', lineHeight: '1.6' }} placeholder="תוכן הפסקאה..." />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setEditing(null)} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '12px' }}>ביטול</button>
+            <button onClick={handleSave} style={{ flex: 2, padding: '8px', borderRadius: '8px', border: 'none', background: 'linear-gradient(135deg,#c8622a,#e8a87c)', color: 'white', fontWeight: '700', cursor: 'pointer', fontSize: '12px' }}>💾 שמור</button>
+          </div>
+        </div>
+      )}
+
+      {paragraphs.length === 0 && !editing && (
+        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px', textAlign: 'center', marginTop: '8px' }}>אין פסקאות עדיין</p>
+      )}
+
+      {paragraphs.map((p, i) => {
+        const pageLabel = PAGE_OPTIONS.find(o => o.value === p.page)?.label || p.page;
+        const slotLabel = PAGE_OPTIONS.find(o => o.value === p.page)?.slots.find(s => s.value === p.slot)?.label || p.slot || 'תחתית';
+        return (
+          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '10px', color: '#e8a87c', fontWeight: '700', background: 'rgba(200,98,42,0.15)', padding: '2px 8px', borderRadius: '50px' }}>{pageLabel}</span>
+                  <span style={{ fontSize: '10px', color: '#93c5fd', fontWeight: '700', background: 'rgba(59,130,246,0.1)', padding: '2px 8px', borderRadius: '50px' }}>{slotLabel}</span>
+                </div>
+                <p style={{ color: 'white', fontWeight: '700', fontSize: '13px', margin: '0 0 4px' }}>{p.title || <em style={{ color: 'rgba(255,255,255,0.3)' }}>ללא כותרת</em>}</p>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', margin: 0, lineHeight: '1.5', maxHeight: '36px', overflow: 'hidden' }}>{p.text}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '4px', flexShrink: 0, marginRight: '8px' }}>
+                <button onClick={() => setEditing({ idx: i, ...p })} style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: 'white', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px' }}>✏️</button>
+                <button onClick={() => handleDelete(i)} style={{ background: 'rgba(239,68,68,0.15)', border: 'none', color: '#fca5a5', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px' }}>🗑️</button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

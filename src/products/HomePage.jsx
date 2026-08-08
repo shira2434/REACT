@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { adminAPI } from '../api/api';
 import { useSelector } from 'react-redux';
-import { useEditMode } from '../admin/EditModeContext';
+import { useEditMode, PageParagraphs } from '../admin/EditModeContext';
 
 const DEFAULT = {
   heroTitle: "לה קוצ'ינה",
@@ -107,7 +107,12 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* קטגוריות */}
+      {/* אחרי Hero */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+        <PageParagraphs page="home" slot="after_hero" />
+      </div>
+
+      {/* קטגוריות */}}
       <div id="categories" style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>
           <h2 {...editable('categoriesTitle')} style={{ fontSize: '36px', fontWeight: '800', color: s.secondaryColor, margin: '0 0 10px' }}>
@@ -170,6 +175,16 @@ const HomePage = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* אחרי קטגוריות */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+        <PageParagraphs page="home" slot="after_categories" />
+      </div>
+
+      {/* תחתית */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px 60px' }}>
+        <PageParagraphs page="home" slot="bottom" />
       </div>
     </div>
   );

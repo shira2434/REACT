@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, toggleWishlist, addToast } from '../store/store';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { useEditMode } from '../admin/EditModeContext';
+import { useEditMode, PageParagraphs } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
 const PRIMARY_LIGHT = '#fdf3ec';
@@ -164,7 +164,9 @@ const ProductList = () => {
         </p>
       </div>
 
-      {/* layout: sidebar + מוצרים */}
+      <PageParagraphs page="catalog" slot="top" />
+
+      {/* layout: sidebar + מוצרים */}}
       <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
 
         {/* Sidebar */}
@@ -420,6 +422,8 @@ const ProductList = () => {
 
       </div> {/* end flex content */}
       </div> {/* end sidebar+products layout */}
+
+      <PageParagraphs page="catalog" slot="bottom" />
 
       <ConfirmDialog
         isOpen={showConfirm}

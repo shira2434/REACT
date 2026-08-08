@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { usersAPI } from '../api/api';
 import { updateUser, addToast } from '../store/store';
-import { useEditMode } from '../admin/EditModeContext';
+import { useEditMode, PageParagraphs } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
 
@@ -98,6 +98,8 @@ const Profile = () => {
           </div>
         </div>
 
+        <PageParagraphs page="profile" slot="top" />
+
         {/* טופס עריכה */}
         <div style={{
           background: 'white', borderRadius: '24px', padding: '36px',
@@ -173,6 +175,7 @@ const Profile = () => {
             )}
           </Formik>
         </div>
+        <PageParagraphs page="profile" slot="bottom" />
       </div>
     </div>
   );
