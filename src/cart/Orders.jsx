@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useEditMode } from '../admin/EditModeContext';
 
 const statusColors = {
   'התקבלה': { bg: '#f0fdf4', color: '#166534', border: '#86efac' },
@@ -10,26 +11,29 @@ const statusColors = {
 const Orders = () => {
   const orders = useSelector(state => state.orders.list);
   const navigate = useNavigate();
+  const { active, settings: liveS, panelOpen, editable } = useEditMode() || {};
+  const s = liveS || {};
+  const ed = editable || (() => ({}));
 
   if (orders.length === 0) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+      <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', paddingTop: active ? '52px' : 0, paddingRight: active && panelOpen ? '340px' : 0, transition: 'padding-right 0.3s' }}>
         <div style={{ fontSize: '80px' }}>📦</div>
-        <h2 style={{ fontSize: '28px', color: '#1f2937' }}>אין הזמנות עדיין</h2>
-        <p style={{ color: '#6b7280' }}>ההזמנות שלך יופיעו כאן לאחר הרכישה</p>
+        <h2 {...ed('ordersEmptyTitle')} style={{ fontSize: '28px', color: '#1f2937' }}>{s.ordersEmptyTitle || 'אין הזמנות עדיין'}</h2>
+        <p {...ed('ordersEmptyText')} style={{ color: '#6b7280' }}>{s.ordersEmptyText || 'ההזמנות שלך יופיעו כאן לאחר הרכישה'}</p>
         <button
           onClick={() => navigate('/home')}
-          style={{ backgroundColor: '#0891b2', color: 'white', padding: '12px 32px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '16px' }}
+          style={{ background: 'linear-gradient(135deg, #e8a87c, #c8622a)', color: 'white', padding: '12px 32px', borderRadius: '50px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '600', boxShadow: '0 4px 12px rgba(200,98,42,0.3)' }}
         >
-          עבור לחנות
+          <span {...ed('ordersShopBtn')}>{s.ordersShopBtn || 'עבור לחנות'}</span>
         </button>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px' }}>
-      <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '30px', color: '#1f2937' }}>📦 ההזמנות שלי</h1>
+    <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px', paddingTop: active ? '72px' : 0, paddingRight: active && panelOpen ? '340px' : '20px', transition: 'padding-right 0.3s' }}>
+      <h1 {...ed('ordersTitle')} style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '30px', color: '#1f2937' }}>{s.ordersTitle || '📦 ההזמנות שלי'}</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {orders.map(order => {
           const sc = statusColors[order.status] || statusColors['התקבלה'];
@@ -53,7 +57,7 @@ const Orders = () => {
                   }}>
                     {order.status}
                   </span>
-                  <span style={{ fontWeight: 'bold', fontSize: '18px', color: '#0891b2' }}>
+                  <span style={{ fontWeight: 'bold', fontSize: '18px', color: '#c8622a' }}>
                     ₪{order.total.toLocaleString()}
                   </span>
                 </div>

@@ -1,0 +1,484 @@
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { adminAPI } from '../api/api';
+
+const Ctx = createContext(null);
+export const useEditMode = () => useContext(Ctx);
+
+const PAGES = [
+  { path: '/home',     label: '🏠 דף הבית' },
+  { path: '/catalog',  label: '🍽️ תפריט' },
+  { path: '/cart',     label: '🛒 עגלה' },
+  { path: '/profile',  label: '👤 פרופיל' },
+  { path: '/orders',   label: '📦 הזמנות' },
+  { path: '/wishlist', label: '❤️ מועדפים' },
+];
+
+const PANEL_SECTIONS = [
+  {
+    id: 'hero', label: '🦸 Hero', fields: [
+      { key: 'heroEmoji',    label: 'אמוג׳י',          type: 'text' },
+      { key: 'heroTitle',    label: 'כותרת ראשית',      type: 'text' },
+      { key: 'heroSubtitle', label: 'תת-כותרת',         type: 'text' },
+      { key: 'heroTagline',  label: 'טקסט קטן',         type: 'text' },
+      { key: 'heroBtnText',  label: 'כפתור ראשי',       type: 'text' },
+      { key: 'heroBtn2Text', label: 'כפתור משני',       type: 'text' },
+      { key: 'heroVideoId',  label: 'YouTube Video ID', type: 'text' },
+      { key: 'heroBgImage',  label: 'תמונת רקע Hero',   type: 'image' },
+    ]
+  },
+  {
+    id: 'categories', label: '🗂️ קטגוריות', fields: [
+      { key: 'categoriesTitle',    label: 'כותרת סקשן',        type: 'text' },
+      { key: 'categoriesSubtitle', label: 'תת-כותרת',          type: 'text' },
+      { key: 'featuredLabel',      label: 'תווית פופולרי',     type: 'text' },
+      { key: 'featuredBadge',      label: 'Badge קטגוריות',    type: 'text' },
+      { key: 'allCatsLabel',       label: 'תווית שאר קטגוריות',type: 'text' },
+    ]
+  },
+  {
+    id: 'catImages', label: '🖼️ קטגוריות', fields: [
+      { key: 'catName_פיצות',             label: '🍕 פיצות — שם',             type: 'text' },
+      { key: 'catImg_פיצות',              label: '🍕 פיצות — תמונה',            type: 'image' },
+      { key: 'catName_פסטות',             label: '🍝 פסטות — שם',             type: 'text' },
+      { key: 'catImg_פסטות',              label: '🍝 פסטות — תמונה',            type: 'image' },
+      { key: 'catName_סושי',              label: '🍣 סושי — שם',              type: 'text' },
+      { key: 'catImg_סושי',               label: '🍣 סושי — תמונה',             type: 'image' },
+      { key: 'catName_דגים',              label: '🐟 דגים — שם',              type: 'text' },
+      { key: 'catImg_דגים',               label: '🐟 דגים — תמונה',             type: 'image' },
+      { key: 'catName_מנות גבינות',       label: '🧀 מנות גבינות — שם',       type: 'text' },
+      { key: 'catImg_מנות גבינות',        label: '🧀 מנות גבינות — תמונה',       type: 'image' },
+      { key: "catName_בוקר ובראנץ'",      label: "🥞 בוקר ובראנץ' — שם",      type: 'text' },
+      { key: "catImg_בוקר ובראנץ'",       label: "🥞 בוקר ובראנץ' — תמונה",      type: 'image' },
+      { key: 'catName_סלטים',             label: '🥗 סלטים — שם',             type: 'text' },
+      { key: 'catImg_סלטים',              label: '🥗 סלטים — תמונה',            type: 'image' },
+      { key: 'catName_מרקים',             label: '🍲 מרקים — שם',             type: 'text' },
+      { key: 'catImg_מרקים',              label: '🍲 מרקים — תמונה',            type: 'image' },
+      { key: 'catName_כריכים ולחמים',     label: '🥙 כריכים ולחמים — שם',     type: 'text' },
+      { key: 'catImg_כריכים ולחמים',      label: '🥙 כריכים ולחמים — תמונה',     type: 'image' },
+      { key: 'catName_קינוחים',           label: '🍰 קינוחים — שם',           type: 'text' },
+      { key: 'catImg_קינוחים',            label: '🍰 קינוחים — תמונה',           type: 'image' },
+      { key: 'catName_בר יין וקוקטיילים', label: '🍷 בר יין וקוקטיילים — שם', type: 'text' },
+      { key: 'catImg_בר יין וקוקטיילים', label: '🍷 בר יין וקוקטיילים — תמונה', type: 'image' },
+      { key: 'catName_שתייה',             label: '☕ שתייה — שם',             type: 'text' },
+      { key: 'catImg_שתייה',              label: '☕ שתייה — תמונה',            type: 'image' },
+    ]
+  },
+  {
+    id: 'colors', label: '🎨 צבעים', fields: [
+      { key: 'primaryColor',   label: 'צבע ראשי',     type: 'color' },
+      { key: 'secondaryColor', label: 'צבע משני',     type: 'color' },
+      { key: 'accentColor',    label: 'צבע הדגשה',    type: 'color' },
+      { key: 'bgColor',        label: 'רקע האתר',     type: 'color' },
+      { key: 'navbarColor',    label: 'Navbar צבע 1', type: 'color' },
+      { key: 'navbarColor2',   label: 'Navbar צבע 2', type: 'color' },
+    ]
+  },
+  {
+    id: 'navbar', label: '🧭 Navbar', fields: [
+      { key: 'navbarBrand',    label: 'שם האתר',        type: 'text' },
+      { key: 'navbarGreeting', label: 'טקסט ברכה',      type: 'text' },
+      { key: 'logoutText',     label: 'כפתור התנתקות',  type: 'text' },
+      { key: 'cartLabel',      label: 'תווית סל קניות', type: 'text' },
+      { key: 'wishlistLabel',  label: 'תווית מועדפים',  type: 'text' },
+    ]
+  },
+  {
+    id: 'catalog', label: '🍽️ תפריט', fields: [
+      { key: 'catalogTitle',       label: 'כותרת עמוד תפריט',    type: 'text' },
+      { key: 'catalogSubtitle',    label: 'תת-כותרת תפריט',      type: 'text' },
+      { key: 'catalogBtnBack',     label: 'כפתור חזרה',          type: 'text' },
+      { key: 'catalogBgFrom',      label: 'רקע כותרת - צבע 1',   type: 'color' },
+      { key: 'catalogBgTo',        label: 'רקע כותרת - צבע 2',   type: 'color' },
+      { key: 'catalogBtnDetails',  label: 'כפתור צפה בפרטים',    type: 'text' },
+      { key: 'catalogBtnAddCart',  label: 'כפתור הוסף לסל',      type: 'text' },
+      { key: 'catalogBtnAdded',    label: 'כפתור נוסף לסל',      type: 'text' },
+      { key: 'catalogBadgeNew',    label: 'Badge חדש',            type: 'text' },
+      { key: 'catalogBadgeHot',    label: 'Badge פופולרי',        type: 'text' },
+      { key: 'catalogEmptyText',   label: 'טקסט אין מנות',       type: 'text' },
+      { key: 'catalogSearchLabel', label: 'placeholder חיפוש',   type: 'text' },
+    ]
+  },
+  {
+    id: 'cart', label: '🛒 עגלה', fields: [
+      { key: 'cartTitle',        label: 'כותרת עגלה',          type: 'text' },
+      { key: 'cartEmptyTitle',   label: 'כותרת עגלה ריקה',     type: 'text' },
+      { key: 'cartEmptyText',    label: 'טקסט עגלה ריקה',      type: 'text' },
+      { key: 'cartSummaryTitle', label: 'כותרת סיכום',         type: 'text' },
+      { key: 'cartCheckoutBtn',  label: 'כפתור תשלום',         type: 'text' },
+      { key: 'cartContinueBtn',  label: 'כפתור המשך קניה',     type: 'text' },
+      { key: 'cartRemoveBtn',    label: 'כפתור הסר פריט',      type: 'text' },
+    ]
+  },
+  {
+    id: 'checkout', label: '💳 תשלום', fields: [
+      { key: 'checkoutTitle',        label: 'כותרת עמוד תשלום',      type: 'text' },
+      { key: 'checkoutStep1',        label: 'שלב 1 — שם',            type: 'text' },
+      { key: 'checkoutStep2',        label: 'שלב 2 — שם',            type: 'text' },
+      { key: 'checkoutStep3',        label: 'שלב 3 — שם',            type: 'text' },
+      { key: 'checkoutBtnNext',      label: 'כפתור המשך',            type: 'text' },
+      { key: 'checkoutBtnBack',      label: 'כפתור חזור',            type: 'text' },
+      { key: 'checkoutBtnPlace',     label: 'כפתור בצע הזמנה',       type: 'text' },
+      { key: 'checkoutFreeShipping', label: 'סף משלוח חינם (₪)',     type: 'text' },
+      { key: 'checkoutShippingCost', label: 'עלות משלוח (₪)',        type: 'text' },
+      { key: 'checkoutFreeLabel',    label: 'טקסט משלוח חינם',       type: 'text' },
+      { key: 'checkoutSuccessTitle', label: 'כותרת הצלחה',           type: 'text' },
+      { key: 'checkoutSuccessBtn',   label: 'כפתור חזור לחנות',      type: 'text' },
+    ]
+  },
+  {
+    id: 'wishlist', label: '❤️ מועדפים', fields: [
+      { key: 'wishlistTitle',      label: 'כותרת מועדפים',        type: 'text' },
+      { key: 'wishlistEmptyTitle', label: 'כותרת ריק',            type: 'text' },
+      { key: 'wishlistEmptyText',  label: 'טקסט ריק',             type: 'text' },
+      { key: 'wishlistShopBtn',    label: 'כפתור לחנות',          type: 'text' },
+      { key: 'wishlistAddCart',    label: 'כפתור הוסף לסל',       type: 'text' },
+    ]
+  },
+  {
+    id: 'orders', label: '📦 הזמנות', fields: [
+      { key: 'ordersTitle',      label: 'כותרת הזמנות',      type: 'text' },
+      { key: 'ordersEmptyTitle', label: 'כותרת אין הזמנות',  type: 'text' },
+      { key: 'ordersEmptyText',  label: 'טקסט אין הזמנות',   type: 'text' },
+      { key: 'ordersShopBtn',    label: 'כפתור לחנות',       type: 'text' },
+    ]
+  },
+  {
+    id: 'profile', label: '👤 פרופיל', fields: [
+      { key: 'profileEditTitle', label: 'כותרת עריכת פרטים', type: 'text' },
+      { key: 'profileSaveBtn',   label: 'כפתור שמירה',       type: 'text' },
+      { key: 'profileBgFrom',    label: 'רקע כרטיס - צבע 1', type: 'color' },
+      { key: 'profileBgTo',      label: 'רקע כרטיס - צבע 2', type: 'color' },
+    ]
+  },
+  {
+    id: 'buildbox', label: '🎁 מארז', fields: [
+      { key: 'buildboxTitle',     label: 'כותרת',               type: 'text' },
+      { key: 'buildboxSubtitle',  label: 'תת-כותרת',            type: 'text' },
+      { key: 'buildboxMin',       label: 'מינימום מנות',         type: 'text' },
+      { key: 'buildboxMax',       label: 'מקסימום מנות',         type: 'text' },
+      { key: 'buildboxDiscount',  label: 'אחוז הנחה',            type: 'text' },
+      { key: 'buildboxBtn',       label: 'כפתור הוסף מארז',      type: 'text' },
+      { key: 'buildboxNameLabel', label: 'תווית שם מארז',        type: 'text' },
+      { key: 'buildboxEmptyText', label: 'טקסט רשימה ריקה',      type: 'text' },
+    ]
+  },
+  {
+    id: 'review', label: '⭐ ביקורות', fields: [
+      { key: 'reviewTitle',        label: 'כותרת הוסף ביקורת',   type: 'text' },
+      { key: 'reviewRatingLabel',  label: 'תווית דירוג',          type: 'text' },
+      { key: 'reviewCommentLabel', label: 'תווית טקסט',           type: 'text' },
+      { key: 'reviewPlaceholder',  label: 'Placeholder טקסט',     type: 'text' },
+      { key: 'reviewSubmitBtn',    label: 'כפתור שלח',            type: 'text' },
+      { key: 'reviewCancelBtn',    label: 'כפתור ביטול',          type: 'text' },
+      { key: 'reviewSectionTitle', label: 'כותרת סקשן ביקורות',   type: 'text' },
+      { key: 'reviewEmptyText',    label: 'טקסט אין ביקורות',     type: 'text' },
+    ]
+  },
+  {
+    id: 'addproduct', label: '➕ הוסף מוצר', fields: [
+      { key: 'addProductTitle',    label: 'כותרת',                type: 'text' },
+      { key: 'addProductSubtitle', label: 'תת-כותרת',             type: 'text' },
+      { key: 'addProductBtn',      label: 'כפתור הוסף',           type: 'text' },
+      { key: 'addProductCancel',   label: 'כפתור ביטול',          type: 'text' },
+    ]
+  },
+  {
+    id: 'notfound', label: '🔍 404', fields: [
+      { key: 'notFoundEmoji', label: 'אמוגי',         type: 'text' },
+      { key: 'notFoundTitle', label: 'כותרת',         type: 'text' },
+      { key: 'notFoundText',  label: 'טקסט',          type: 'text' },
+      { key: 'notFoundBtn',   label: 'כפתור חזור',    type: 'text' },
+    ]
+  },
+  {
+    id: 'general', label: '📄 כללי', fields: [
+      { key: 'siteName',       label: 'שם האתר',    type: 'text' },
+      { key: 'siteTagline',    label: 'סלוגן',      type: 'text' },
+      { key: 'contactPhone',   label: 'טלפון',      type: 'text' },
+      { key: 'contactEmail',   label: 'אימייל',     type: 'text' },
+      { key: 'contactAddress', label: 'כתובת',      type: 'text' },
+      { key: 'openingHours',   label: 'שעות פתיחה', type: 'text' },
+    ]
+  },
+];
+
+export function EditModeProvider({ children }) {
+  const [active, setActive] = useState(false);
+  const [settings, setSettings] = useState({});
+  const [popup, setPopup] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [highlight, setHighlight] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [panelSection, setPanelSection] = useState('hero');
+
+  useEffect(() => {
+    adminAPI.getSettings().then(r => setSettings(r.data || {})).catch(() => {});
+  }, []);
+
+  const save = useCallback(async (key, val) => {
+    if (settings[key] === val) { setPopup(null); return; }
+    setHistory(h => [...h, { key, val: settings[key] }]);
+    setSettings(s => ({ ...s, [key]: val }));
+    setPopup(null);
+    setSaving(true);
+    try { await adminAPI.updateSettings({ [key]: val }); } catch {}
+    setSaving(false);
+  }, [settings]);
+
+  const undo = useCallback(() => {
+    if (!history.length) return;
+    const last = history[history.length - 1];
+    setSettings(s => ({ ...s, [last.key]: last.val }));
+    setHistory(h => h.slice(0, -1));
+    adminAPI.updateSettings({ [last.key]: last.val }).catch(() => {});
+  }, [history]);
+
+  const resetAll = useCallback(async () => {
+    if (!window.confirm('לאפס את כל השינויים?')) return;
+    const res = await adminAPI.getSettings();
+    setSettings(res.data || {});
+    setHistory([]);
+  }, []);
+
+  const editable = useCallback((key, type = 'text') => {
+    if (!active) return {};
+    return {
+      'data-editable': key,
+      onClick: (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const rect = e.currentTarget.getBoundingClientRect();
+        setPopup({ key, value: settings[key] ?? '', type, rect });
+      },
+      style: highlight ? { cursor: 'pointer' } : {},
+      onMouseEnter: highlight ? e => { e.currentTarget.style.outline = '2px dashed #c8622a'; e.currentTarget.style.outlineOffset = '3px'; e.currentTarget.style.borderRadius = '4px'; } : undefined,
+      onMouseLeave: highlight ? e => { e.currentTarget.style.outline = ''; e.currentTarget.style.outlineOffset = ''; } : undefined,
+      title: '✏️ לחץ לעריכה',
+    };
+  }, [active, settings, highlight]);
+
+  return (
+    <Ctx.Provider value={{ active, setActive, settings, editable, save, undo, resetAll, saving, history, highlight, setHighlight, panelOpen, setPanelOpen, setPanelSection }}>
+      {children}
+      {active && <EditToolbar saving={saving} history={history} undo={undo} resetAll={resetAll} setActive={setActive} highlight={highlight} setHighlight={setHighlight} panelOpen={panelOpen} setPanelOpen={setPanelOpen} />}
+      {active && <EditPanel open={panelOpen} section={panelSection} setSection={setPanelSection} settings={settings} onSave={save} saving={saving} />}
+      {popup && <EditPopup popup={popup} onSave={save} onClose={() => setPopup(null)} saving={saving} />}
+      {active && <style>{`[data-editable]:hover { outline: 2px dashed #c8622a !important; outline-offset: 3px !important; border-radius: 4px !important; }`}</style>}
+    </Ctx.Provider>
+  );
+}
+
+// ── Toolbar ───────────────────────────────────────────────────────────────────
+function EditToolbar({ saving, history, undo, resetAll, setActive, highlight, setHighlight, panelOpen, setPanelOpen }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [pagesOpen, setPagesOpen] = useState(false);
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, background: 'linear-gradient(90deg,#0f172a,#1e1208,#0f172a)', borderBottom: '2px solid #c8622a44', padding: '0 16px', height: '52px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 24px rgba(0,0,0,0.6)', direction: 'rtl' }}>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '8px' }}>
+        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80', display: 'inline-block', boxShadow: '0 0 8px #4ade80' }} />
+        <span style={{ color: 'white', fontWeight: '800', fontSize: '13px' }}>עריכה חיה</span>
+      </div>
+
+      <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.15)' }} />
+
+      <button onClick={() => setPanelOpen(o => !o)} style={{ background: panelOpen ? 'linear-gradient(135deg,#c8622a,#e8a87c)' : 'rgba(255,255,255,0.1)', border: `1px solid ${panelOpen ? '#c8622a' : 'rgba(255,255,255,0.2)'}`, color: 'white', padding: '5px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}>
+        ⚙️ פאנל עריכה {panelOpen ? '◀' : '▶'}
+      </button>
+
+      <div style={{ position: 'relative' }}>
+        <button onClick={() => setPagesOpen(o => !o)} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', padding: '5px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}>
+          🗺️ ניווט ▾
+        </button>
+        {pagesOpen && (
+          <div style={{ position: 'absolute', top: '36px', right: 0, background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '8px', minWidth: '180px', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', zIndex: 100 }}>
+            {PAGES.map(p => (
+              <button key={p.path} onClick={() => { navigate(p.path); setPagesOpen(false); }} style={{ display: 'block', width: '100%', textAlign: 'right', background: location.pathname === p.path ? 'rgba(200,98,42,0.2)' : 'transparent', border: 'none', color: location.pathname === p.path ? '#e8a87c' : 'rgba(255,255,255,0.8)', padding: '9px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: location.pathname === p.path ? '700' : '500' }}>{p.label}</button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{PAGES.find(p => p.path === location.pathname)?.label || location.pathname}</span>
+
+      <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {saving && <span style={{ color: '#fcd34d', fontSize: '12px', fontWeight: '600' }}>⏳ שומר...</span>}
+
+<button onClick={undo} disabled={!history.length} style={{ background: history.length ? 'rgba(255,255,255,0.1)' : 'transparent', border: 'none', color: history.length ? 'white' : 'rgba(255,255,255,0.2)', padding: '5px 12px', borderRadius: '8px', cursor: history.length ? 'pointer' : 'default', fontSize: '12px', fontWeight: '600' }}>
+          ↶ בטל {history.length > 0 && `(${history.length})`}
+        </button>
+
+        <button onClick={resetAll} style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fca5a5', padding: '5px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}>↺ אפס</button>
+
+        <button onClick={() => navigate('/admin')} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', padding: '5px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>⚙️ ניהול</button>
+
+        <button onClick={() => setActive(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', padding: '5px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}>✕ סגור</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Side Panel ────────────────────────────────────────────────────────────────
+function EditPanel({ open, section, setSection, settings, onSave, saving }) {
+  const [localVals, setLocalVals] = useState({});
+  const [saved, setSaved] = useState({});
+  const [search, setSearch] = useState('');
+
+  useEffect(() => { setLocalVals({}); setSaved({}); setSearch(''); }, [section]);
+
+  const getValue = (key) => key in localVals ? localVals[key] : (settings[key] ?? '');
+  const handleChange = (key, val) => setLocalVals(p => ({ ...p, [key]: val }));
+
+  const handleSave = async (key) => {
+    await onSave(key, localVals[key] ?? settings[key] ?? '');
+    setSaved(p => ({ ...p, [key]: true }));
+    setTimeout(() => setSaved(p => ({ ...p, [key]: false })), 1500);
+  };
+
+  const handleSaveAll = async () => {
+    for (const [key, val] of Object.entries(localVals)) await onSave(key, val);
+    setLocalVals({});
+  };
+
+  const currentSection = PANEL_SECTIONS.find(s => s.id === section);
+  const visibleFields = search
+    ? currentSection?.fields.filter(f => f.label.includes(search) || f.key.includes(search))
+    : currentSection?.fields;
+  const hasChanges = Object.keys(localVals).length > 0;
+
+  if (!open) return null;
+
+  return (
+    <div style={{ position: 'fixed', top: '52px', right: 0, bottom: 0, width: '340px', background: '#0f172a', borderLeft: '2px solid #c8622a44', zIndex: 99998, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.4)', direction: 'rtl' }}>
+
+      {/* Search */}
+      <div style={{ padding: '10px 10px 0', background: '#1e293b' }}>
+        <input
+          value={search} onChange={e => setSearch(e.target.value)}
+          placeholder="🔍 חיפוש שדה..."
+          style={{ width: '100%', padding: '7px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none', boxSizing: 'border-box' }}
+        />
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#1e293b' }}>
+        {PANEL_SECTIONS.map(s => (
+          <button key={s.id} onClick={() => setSection(s.id)} style={{ padding: '5px 9px', borderRadius: '8px', fontSize: '11px', fontWeight: '600', border: 'none', cursor: 'pointer', background: section === s.id ? 'linear-gradient(135deg,#c8622a,#e8a87c)' : 'rgba(255,255,255,0.07)', color: section === s.id ? 'white' : 'rgba(255,255,255,0.6)' }}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Fields */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {visibleFields?.length === 0 && (
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px', textAlign: 'center', marginTop: '20px' }}>אין תוצאות</p>
+        )}
+        {visibleFields?.map(field => (
+          <div key={field.key}>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {field.label}
+            </label>
+
+            {field.type === 'color' && (
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input type="color" value={getValue(field.key) || '#c8622a'} onChange={e => handleChange(field.key, e.target.value)}
+                  style={{ width: '44px', height: '36px', border: 'none', borderRadius: '8px', cursor: 'pointer', padding: '2px', background: 'none', flexShrink: 0 }} />
+                <input value={getValue(field.key)} onChange={e => handleChange(field.key, e.target.value)}
+                  style={{ flex: 1, padding: '8px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '13px', outline: 'none' }} />
+                <SaveBtn onClick={() => handleSave(field.key)} saved={saved[field.key]} />
+              </div>
+            )}
+
+            {field.type === 'image' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input value={getValue(field.key)} onChange={e => handleChange(field.key, e.target.value)} placeholder="https://..."
+                    style={{ flex: 1, padding: '8px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none' }} />
+                  <SaveBtn onClick={() => handleSave(field.key)} saved={saved[field.key]} />
+                </div>
+                {getValue(field.key) && (
+                  <img src={getValue(field.key)} alt="" style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }} onError={e => e.target.style.display = 'none'} />
+                )}
+              </div>
+            )}
+
+            {field.type === 'text' && (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <input value={getValue(field.key)} onChange={e => handleChange(field.key, e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSave(field.key)}
+                  style={{ flex: 1, padding: '8px 10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', color: 'white', fontSize: '13px', outline: 'none' }} />
+                <SaveBtn onClick={() => handleSave(field.key)} saved={saved[field.key]} />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Save all bar */}
+      {hasChanges && (
+        <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', background: '#1e293b' }}>
+          <button onClick={handleSaveAll} disabled={saving} style={{ width: '100%', padding: '11px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg,#c8622a,#e8a87c)', color: 'white', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>
+            {saving ? '⏳ שומר...' : `💾 שמור הכל (${Object.keys(localVals).length} שינויים)`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SaveBtn({ onClick, saved }) {
+  return (
+    <button onClick={onClick} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: '700', background: saved ? '#16a34a' : 'linear-gradient(135deg,#c8622a,#e8a87c)', color: 'white', flexShrink: 0, transition: 'background 0.2s' }}>
+      {saved ? '✓' : '💾'}
+    </button>
+  );
+}
+
+// ── Popup ─────────────────────────────────────────────────────────────────────
+function EditPopup({ popup, onSave, onClose, saving }) {
+  const [val, setVal] = useState(popup.value ?? '');
+  const { rect } = popup;
+  const top = Math.min(rect.bottom + 8, window.innerHeight - 320);
+  const left = Math.max(8, Math.min(rect.left, window.innerWidth - 380));
+
+  return (
+    <>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 99997 }} onClick={onClose} />
+      <div style={{ position: 'fixed', top, left, zIndex: 99998, background: 'white', borderRadius: '18px', padding: '20px', boxShadow: '0 24px 80px rgba(0,0,0,0.35)', width: '360px', border: '2px solid #e8a87c', direction: 'rtl' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div>
+            <span style={{ fontWeight: '800', color: '#3b1a08', fontSize: '14px' }}>✏️ עריכה</span>
+            <code style={{ marginRight: '8px', fontSize: '11px', color: '#c8622a', background: '#fdf6f0', padding: '2px 8px', borderRadius: '6px' }}>{popup.key}</code>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#9ca3af' }}>✕</button>
+        </div>
+
+        {popup.type === 'color' ? (
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <input type="color" value={val} onChange={e => setVal(e.target.value)} style={{ width: '52px', height: '52px', border: 'none', borderRadius: '12px', cursor: 'pointer', padding: '2px', flexShrink: 0 }} />
+            <input value={val} onChange={e => setVal(e.target.value)} style={{ flex: 1, padding: '12px', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '14px', outline: 'none' }} />
+          </div>
+        ) : popup.type === 'image' ? (
+          <>
+            <input value={val} onChange={e => setVal(e.target.value)} placeholder="https://..." style={{ width: '100%', padding: '11px', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '10px' }} />
+            {val && <img src={val} alt="" style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '10px' }} onError={e => e.target.style.display = 'none'} />}
+          </>
+        ) : (
+          <textarea value={val} onChange={e => setVal(e.target.value)} rows={val.length > 60 ? 4 : 2} autoFocus onFocus={e => e.target.select()}
+            style={{ width: '100%', padding: '11px', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '14px', outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit', direction: 'rtl', lineHeight: '1.6' }} />
+        )}
+
+        <div style={{ display: 'flex', gap: '8px', marginTop: '14px' }}>
+          <button onClick={onClose} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>ביטול</button>
+          <button onClick={() => onSave(popup.key, val)} disabled={saving} style={{ flex: 2, padding: '10px', background: 'linear-gradient(135deg,#e8a87c,#c8622a)', border: 'none', borderRadius: '10px', cursor: 'pointer', color: 'white', fontWeight: '700', fontSize: '14px' }}>
+            {saving ? '⏳ שומר...' : '💾 שמור'}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}

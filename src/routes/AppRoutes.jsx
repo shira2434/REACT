@@ -15,6 +15,7 @@ import Orders from '../cart/Orders';
 import Navbar from '../layout/Navbar';
 import ScrollToTop from '../components/ScrollToTop';
 import NotFound from '../components/NotFound';
+import AdminDashboard from '../admin/AdminDashboard';
 
 const RouteGuard = ({ children, requireAuth = false, requireAdmin = false }) => {
   const user = useSelector(state => state.user.currentUser);
@@ -51,6 +52,7 @@ const AppRoutes = () => {
         <Route path="/wishlist" element={<RouteGuard requireAuth><AuthLayout><Wishlist /></AuthLayout></RouteGuard>} />
         <Route path="/build-box" element={<RouteGuard requireAuth><AuthLayout><BuildBox /></AuthLayout></RouteGuard>} />
         <Route path="/add-product" element={<RouteGuard requireAuth requireAdmin><AuthLayout><AddProduct /></AuthLayout></RouteGuard>} />
+        <Route path="/admin" element={<RouteGuard requireAuth requireAdmin><AdminDashboard /></RouteGuard>} />
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<NotFound />} />

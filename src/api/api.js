@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 // שורה 3 בקובץ הזה:
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://react-6woq.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 const api = axios.create({ baseURL: API_BASE_URL });
 
 // צרף token לכל בקשה
@@ -45,11 +45,29 @@ export const reviewsAPI = {
 
 export const usersAPI = {
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
+  getAllUsers: () => api.get('/users'),
+  deleteUser: (id) => api.delete(`/users/${id}`),
 };
 
 export const ordersAPI = {
   getOrders: () => api.get('/orders'),
   addOrder: (order) => api.post('/orders', order),
+  updateOrder: (id, data) => api.put(`/orders/${id}`, data),
+};
+
+export const adminAPI = {
+  getSettings: () => api.get('/settings'),
+  updateSettings: (settings) => api.put('/settings', settings),
+  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  getAllReviews: () => api.get('/reviews'),
+  deleteReview: (id) => api.delete(`/reviews/${id}`),
+};
+
+export const categoriesAPI = {
+  getCategories: () => api.get('/categories'),
+  addCategory: (cat) => api.post('/categories', cat),
+  updateCategory: (id, data) => api.put(`/categories/${id}`, data),
+  deleteCategory: (id) => api.delete(`/categories/${id}`),
 };
 
 export default api;

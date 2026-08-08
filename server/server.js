@@ -156,6 +156,11 @@ app.delete('/api/products/:id', authMiddleware, adminMiddleware, (req, res) => {
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
+app.get('/api/reviews', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  res.json(data.reviews || []);
+});
+
 app.get('/api/products/:id/reviews', (req, res) => {
   const data = readData();
   const reviews = (data.reviews || [])
@@ -188,6 +193,7 @@ app.post('/api/reviews', authMiddleware, (req, res) => {
 
 app.get('/api/orders', authMiddleware, (req, res) => {
   const data = readData();
+  if (req.user.isAdmin) return res.json(data.orders || []);
   const orders = (data.orders || []).filter(o => o.userId === req.user.id);
   res.json(orders);
 });
@@ -199,6 +205,124 @@ app.post('/api/orders', authMiddleware, (req, res) => {
   data.orders.unshift(newOrder);
   writeData(data);
   res.json({ success: true, order: newOrder });
+});
+
+app.put('/api/orders/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const idx = (data.orders || []).findIndex(o => o.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ message: 'הזמנה לא נמצאה' });
+  data.orders[idx] = { ...data.orders[idx], ...req.body };
+  writeData(data);
+  res.json({ success: true, order: data.orders[idx] });
+});
+
+// ── Products PUT ──────────────────────────────────────────────────────────────
+
+app.put('/api/products/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const idx = data.products.findIndex(p => p.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'מוצר לא נמצא' });
+  data.products[idx] = { ...data.products[idx], ...req.body };
+  writeData(data);
+  res.json({ success: true, product: data.products[idx] });
+});
+
+// ── Users (Admin) ─────────────────────────────────────────────────────────────
+
+app.get('/api/users', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const users = (data.users || []).map(({ password, ...u }) => u);
+  res.json(users);
+});
+
+app.put('/api/users/:id', authMiddleware, (req, res) => {
+  const data = readData();
+  const idx = data.users.findIndex(u => u.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'משתמש לא נמצא' });
+  if (!req.user.isAdmin && req.user.id !== parseInt(req.params.id))
+    return res.status(403).json({ message: 'אין הרשאה' });
+  const { password, ...updates } = req.body;
+  data.users[idx] = { ...data.users[idx], ...updates };
+  writeData(data);
+  const { password: _, ...userOut } = data.users[idx];
+  res.json({ success: true, user: userOut });
+});
+
+app.delete('/api/users/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const idx = data.users.findIndex(u => u.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'משתמש לא נמצא' });
+  data.users.splice(idx, 1);
+  writeData(data);
+  res.json({ success: true });
+});
+
+// ── Reviews (Admin delete) ────────────────────────────────────────────────────
+
+app.delete('/api/reviews/:id', authMiddleware, (req, res) => {
+  const data = readData();
+  const idx = (data.reviews || []).findIndex(r => r.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'ביקורת לא נמצאה' });
+  const review = data.reviews[idx];
+  if (!req.user.isAdmin && review.userId !== req.user.id)
+    return res.status(403).json({ message: 'אין הרשאה' });
+  data.reviews.splice(idx, 1);
+  writeData(data);
+  res.json({ success: true });
+});
+
+// ── Categories ───────────────────────────────────────────────────────────────
+
+app.get('/api/categories', (req, res) => {
+  const data = readData();
+  res.json(data.categories || []);
+});
+
+app.post('/api/categories', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  if (!data.categories) data.categories = [];
+  const newCat = {
+    id: data.categories.length > 0 ? Math.max(...data.categories.map(c => c.id)) + 1 : 1,
+    ...req.body
+  };
+  data.categories.push(newCat);
+  writeData(data);
+  res.json({ success: true, category: newCat });
+});
+
+app.put('/api/categories/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const idx = (data.categories || []).findIndex(c => c.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'קטגוריה לא נמצאה' });
+  data.categories[idx] = { ...data.categories[idx], ...req.body };
+  writeData(data);
+  res.json({ success: true, category: data.categories[idx] });
+});
+
+app.delete('/api/categories/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  const idx = (data.categories || []).findIndex(c => c.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'קטגוריה לא נמצאה' });
+  const catName = data.categories[idx].name;
+  data.categories.splice(idx, 1);
+  const deletedCount = (data.products || []).filter(p => p.category === catName).length;
+  data.products = (data.products || []).filter(p => p.category !== catName);
+  writeData(data);
+  res.json({ success: true, deletedProducts: deletedCount });
+});
+
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+app.get('/api/settings', (req, res) => {
+  const data = readData();
+  res.json(data.settings || {});
+});
+
+app.put('/api/settings', authMiddleware, adminMiddleware, (req, res) => {
+  const data = readData();
+  data.settings = { ...data.settings, ...req.body };
+  writeData(data);
+  res.json({ success: true, settings: data.settings });
 });
 
 // ── Server Start ─────────────────────────────────────────────────────────────

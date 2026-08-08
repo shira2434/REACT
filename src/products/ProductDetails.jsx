@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, toggleWishlist, addToast } from '../store/store';
 import AddReview from '../reviews/AddReview';
 import CustomizeModal from './CustomizeModal';
+import { useEditMode } from '../admin/EditModeContext';
 
 const CUSTOMIZABLE = ['פסטות', 'פיצות', 'סושי', 'סלטים'];
 
@@ -15,14 +16,17 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [showAddReview, setShowAddReview] = useState(false);
   const [added, setAdded] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const dispatch = useDispatch();
 
   const wishlistItems = useSelector(state => state.wishlist.items);
+  const user = useSelector(state => state.user.currentUser);
   const isWishlisted = product ? wishlistItems.some(i => i.id === product.id) : false;
+  const { active, panelOpen, editable, settings: liveS } = useEditMode() || {};
+  const ed = editable || (() => ({}));
+  const s = liveS || {};
 
   const handleAddToCart = (customProduct) => {
     const p = customProduct || product;
@@ -41,10 +45,6 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
     loadProductData();
   }, [id]);
 
@@ -103,7 +103,7 @@ const ProductDetails = () => {
     : 0;
 
   return (
-    <div style={{minHeight: '100vh', padding: '40px 20px', backgroundColor: '#f8fafc'}}>
+    <div style={{minHeight: '100vh', padding: '40px 20px', paddingTop: active ? '72px' : '40px', paddingRight: active && panelOpen ? '360px' : '20px', backgroundColor: '#f8fafc', transition: 'padding 0.3s'}}>
       <div style={{maxWidth: '1100px', margin: '0 auto'}}>
 
         <button
@@ -230,11 +230,11 @@ const ProductDetails = () => {
             textAlign: 'center',
             color: '#0c4a6e'
           }}>
-            חווות דעת לקוחות
+            {s.reviewSectionTitle || 'חווות דעת לקוחות'}
           </h2>
           
           {reviews.length === 0 ? (
-            <p style={{color: '#64748b', fontSize: '18px', textAlign: 'center'}}>אין עדיין חווות דעת. היה הראשון לכתוב!</p>
+            <p style={{color: '#64748b', fontSize: '18px', textAlign: 'center'}}>{s.reviewEmptyText || 'אין עדיין חווות דעת. היה הראשון לכתוב!'}</p>
           ) : (
             <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
               {reviews.map(review => (

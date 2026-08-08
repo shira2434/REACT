@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { productsAPI } from '../api/api';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { productsAPI, adminAPI } from '../api/api';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, toggleWishlist, addToast } from '../store/store';
 import ConfirmDialog from '../components/ConfirmDialog';
+import { useEditMode } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
 const PRIMARY_LIGHT = '#fdf3ec';
@@ -22,12 +23,16 @@ const ProductList = () => {
   const [totalProducts, setTotalProducts] = useState(0);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.currentUser);
   const wishlistItems = useSelector(state => state.wishlist.items);
+  const { active, settings: liveS, panelOpen, editable } = useEditMode() || {};
+  const s = liveS || {};
+  const ed = editable || (() => ({}));
   const [addedMap, setAddedMap] = useState({});
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editVals, setEditVals] = useState({});
+  const [editSaving, setEditSaving] = useState(false);
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
@@ -102,6 +107,24 @@ const ProductList = () => {
     }
   };
 
+  const openEditProduct = (product) => {
+    setEditingProduct(product.id);
+    setEditVals({ name: product.name, price: product.price, image: product.image, description: product.description });
+  };
+
+  const saveEditProduct = async (productId) => {
+    setEditSaving(true);
+    try {
+      await adminAPI.updateProduct(productId, editVals);
+      setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...editVals } : p));
+      dispatch(addToast({ type: 'success', message: 'המנה עודכנה ✅' }));
+      setEditingProduct(null);
+    } catch {
+      dispatch(addToast({ type: 'error', message: 'שגיאה בעדכון' }));
+    }
+    setEditSaving(false);
+  };
+
   const sortedProducts = getSortedProducts();
 
   const categoryIcons = {
@@ -116,11 +139,11 @@ const ProductList = () => {
   const maxPrice = 200;
 
   return (
-    <div style={{ padding: '24px', paddingTop: '30px' }}>
+    <div style={{ padding: '24px', paddingTop: active ? '72px' : '30px', paddingRight: active && panelOpen ? '340px' : '24px', transition: 'padding-right 0.3s' }}>
 
       {/* כותרת */}
       <div style={{
-        background: 'linear-gradient(135deg, #e8a87c 0%, #8b3a1a 100%)',
+        background: `linear-gradient(135deg, ${s.catalogBgFrom || '#e8a87c'} 0%, ${s.catalogBgTo || '#8b3a1a'} 100%)`,
         padding: '40px', textAlign: 'center', marginBottom: '30px',
         borderRadius: '24px', boxShadow: '0 15px 35px rgba(139,58,26,0.25)',
         position: 'relative'
@@ -131,13 +154,13 @@ const ProductList = () => {
           color: 'white', padding: '8px 16px', borderRadius: '50px',
           cursor: 'pointer', fontSize: '13px', fontWeight: '600', backdropFilter: 'blur(10px)'
         }}>
-          ← חזרה לקטגוריות
+          <span {...ed('catalogBtnBack')}>{s.catalogBtnBack || '← חזרה לקטגוריות'}</span>
         </button>
-        <h1 style={{ fontSize: '48px', color: 'white', fontWeight: 'bold', margin: '0', textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}>
-          🍽️ לה קוצ'ינה
+        <h1 {...ed('catalogTitle')} style={{ fontSize: '48px', color: 'white', fontWeight: 'bold', margin: '0', textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}>
+          {s.catalogTitle || "🍽️ לה קוצ'ינה"}
         </h1>
-        <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginTop: '10px', fontWeight: '300' }}>
-          קייטרינג חלבי איטלקי • מנות טריות מדי יום ✨
+        <p {...ed('catalogSubtitle')} style={{ fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginTop: '10px', fontWeight: '300' }}>
+          {s.catalogSubtitle || 'קייטרינג חלבי איטלקי • מנות טריות מדי יום ✨'}
         </p>
       </div>
 
@@ -155,7 +178,7 @@ const ProductList = () => {
           {/* חיפוש */}
           <h3 style={{ color: '#8b3a1a', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', marginTop: 0 }}>🔍 חיפוש</h3>
           <input
-            type="text" placeholder="חפש מנה..." value={search}
+            type="text" placeholder={s.catalogSearchLabel || 'חפש מנה...'} value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: '100%', padding: '9px 12px', fontSize: '14px', border: '2px solid #f0e0cc', borderRadius: '10px', outline: 'none', boxSizing: 'border-box', marginBottom: '20px' }}
           />
@@ -223,8 +246,50 @@ const ProductList = () => {
             <div key={product.id} className="product-card" style={{
               backgroundColor: 'white', borderRadius: '20px',
               boxShadow: '0 4px 16px rgba(200,98,42,0.1)', overflow: 'hidden',
-              border: '2px solid #f0e0cc', position: 'relative'
+              border: `2px solid ${active && editingProduct === product.id ? '#c8622a' : '#f0e0cc'}`, position: 'relative'
             }}>
+              {/* כפתור עריכה מהירה למנהל במצב עריכה */}
+              {active && user?.isAdmin && editingProduct !== product.id && (
+                <button onClick={() => openEditProduct(product)} style={{
+                  position: 'absolute', top: '8px', left: '8px', zIndex: 10,
+                  background: 'linear-gradient(135deg,#c8622a,#e8a87c)', color: 'white',
+                  border: 'none', borderRadius: '8px', padding: '5px 10px',
+                  fontSize: '11px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                }}>✏️ ערוך</button>
+              )}
+              {/* פאנל עריכה מהירה */}
+              {active && editingProduct === product.id && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 20, background: 'rgba(15,23,42,0.97)',
+                  borderRadius: '18px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ color: '#e8a87c', fontWeight: '800', fontSize: '13px' }}>✏️ עריכת מנה</span>
+                    <button onClick={() => setEditingProduct(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+                  </div>
+                  {[{key:'name',label:'שם',type:'text'},{key:'price',label:'מחיר ₪',type:'number'},{key:'image',label:'תמונה URL',type:'text'}].map(f => (
+                    <div key={f.key}>
+                      <label style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: '3px', textTransform: 'uppercase' }}>{f.label}</label>
+                      <input type={f.type} value={editVals[f.key] || ''}
+                        onChange={e => setEditVals(v => ({ ...v, [f.key]: f.type === 'number' ? +e.target.value : e.target.value }))}
+                        style={{ width: '100%', padding: '7px 10px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: '3px', textTransform: 'uppercase' }}>תיאור</label>
+                    <textarea value={editVals.description || ''}
+                      onChange={e => setEditVals(v => ({ ...v, description: e.target.value }))}
+                      rows={2} style={{ width: '100%', padding: '7px 10px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'white', fontSize: '12px', outline: 'none', resize: 'none', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {editVals.image && <img src={editVals.image} alt="" style={{ width: '100%', height: '60px', objectFit: 'cover', borderRadius: '6px' }} onError={e => e.target.style.display='none'} />}
+                  <button onClick={() => saveEditProduct(product.id)} disabled={editSaving}
+                    style={{ width: '100%', padding: '9px', background: 'linear-gradient(135deg,#c8622a,#e8a87c)', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer', marginTop: '4px' }}>
+                    {editSaving ? '⏳ שומר...' : '💾 שמור שינויים'}
+                  </button>
+                </div>
+              )}
               {!user?.isAdmin && (
                 <button onClick={() => handleToggleWishlist(product)} style={{
                   position: 'absolute', top: '12px', right: '12px', zIndex: 1,
@@ -242,7 +307,7 @@ const ProductList = () => {
                   background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                   color: 'white', padding: '4px 10px', borderRadius: '50px',
                   fontSize: '11px', fontWeight: '700',
-                }}>🔥 פופולרי</div>
+                }}>{s.catalogBadgeHot || '🔥 פופולרי'}</div>
               )}
               {product.sold < 20 && (
                 <div style={{
@@ -250,7 +315,7 @@ const ProductList = () => {
                   background: 'linear-gradient(135deg, #34d399, #059669)',
                   color: 'white', padding: '4px 10px', borderRadius: '50px',
                   fontSize: '11px', fontWeight: '700',
-                }}>✨ חדש</div>
+                }}>{s.catalogBadgeNew || '✨ חדש'}</div>
               )}
               <img src={product.image} alt={product.name}
                 style={{ width: '100%', height: '200px', objectFit: 'cover', cursor: 'pointer' }}
@@ -282,7 +347,7 @@ const ProductList = () => {
                   cursor: 'pointer', fontSize: '14px', fontWeight: '600', marginBottom: '8px',
                   boxShadow: '0 4px 12px rgba(200,98,42,0.3)'
                 }}>
-                  צפה בפרטים
+                  {s.catalogBtnDetails || 'צפה בפרטים'}
                 </button>
                 {!user?.isAdmin && (
                   <button onClick={() => handleAddToCart(product)} style={{
@@ -293,7 +358,7 @@ const ProductList = () => {
                     border: `2px solid ${addedMap[product.id] ? '#16a34a' : PRIMARY}`,
                     cursor: 'pointer', fontSize: '14px', fontWeight: '600', transition: 'all 0.3s'
                   }}>
-                    {addedMap[product.id] ? '✓ נוסף לסל!' : '🛒 הוסף לסל'}
+                    {addedMap[product.id] ? (s.catalogBtnAdded || '✓ נוסף לסל!') : (s.catalogBtnAddCart || '🛒 הוסף לסל')}
                   </button>
                 )}
                 {user?.isAdmin && (
@@ -328,7 +393,7 @@ const ProductList = () => {
       {sortedProducts.length === 0 && !loading && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
           <div style={{ fontSize: '60px' }}>🍽️</div>
-          <p style={{ fontSize: '18px', color: '#9ca3af', marginTop: '12px' }}>לא נמצאו מנות</p>
+          <p style={{ fontSize: '18px', color: '#9ca3af', marginTop: '12px' }}>{s.catalogEmptyText || 'לא נמצאו מנות'}</p>
         </div>
       )}
 

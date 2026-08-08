@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser, clearCart, clearWishlist } from '../store/store';
+import { useEditMode } from '../admin/EditModeContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ const Navbar = () => {
   const cartItems = useSelector(state => state.cart.items);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = useSelector(state => state.wishlist.items.length);
+  const { active, setActive, settings: liveS } = useEditMode() || {};
+  const s = liveS || {};
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -39,20 +42,23 @@ const Navbar = () => {
       { to: '/build-box', label: '🎁 הרכב מארז' },
     ] : [
       { to: '/add-product', label: '➕ הוסף מנה' },
+      { to: '/admin', label: '⚙️ דשבורד ניהול' },
     ]),
   ];
 
   return (
     <>
       <nav style={{
-        background: 'linear-gradient(135deg, #c8622a, #8b3a1a, #c8622a)',
+        background: `linear-gradient(135deg, ${s.navbarColor || '#c8622a'}, ${s.navbarColor2 || '#8b3a1a'}, ${s.navbarColor || '#c8622a'})`,
         color: 'white', boxShadow: '0 4px 20px rgba(139,58,26,0.4)',
         width: '100%', position: 'relative', zIndex: 100,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', height: '70px', padding: '0 20px', direction: 'ltr' }}>
 
+
+
           {/* שמאל - התנתק */}
-          <button onClick={handleLogout} className="logout-btn">🚪 התנתק</button>
+          <button onClick={handleLogout} className="logout-btn">{s.logoutText || '🚪 התנתק'}</button>
 
           {/* מרכז - ניווט desktop */}
           <div style={{
@@ -64,7 +70,7 @@ const Navbar = () => {
             ))}
             {!user.isAdmin && (
               <Link to="/cart" style={linkStyle}>
-                🛒 סל קניות
+                {s.cartLabel || '🛒 סל קניות'}
                 {cartCount > 0 && (
                   <span style={{
                     backgroundColor: 'white', color: '#c8622a', borderRadius: '50%',
@@ -87,7 +93,7 @@ const Navbar = () => {
                 )}
               </Link>
             )}
-            <span style={{ fontSize: '14px', fontWeight: '600' }} className="nav-desktop">👋 שלום, {user.firstName}</span>
+            <span style={{ fontSize: '14px', fontWeight: '600' }} className="nav-desktop">{s.navbarGreeting || '👋 שלום'}, {user.firstName}</span>
 
             {/* המבורגר */}
             <button
@@ -107,7 +113,7 @@ const Navbar = () => {
             display: 'flex', flexDirection: 'column', gap: '8px',
             animation: 'fadeInDown 0.2s ease',
           }}>
-            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', marginBottom: '4px' }}>שלום, {user.firstName}</span>
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', marginBottom: '4px' }}>{s.navbarGreeting || 'שלום'}, {user.firstName}</span>
             {links.map(l => (
               <Link key={l.to} to={l.to} onClick={() => setMenuOpen(false)}
                 style={{ ...linkStyle, justifyContent: 'flex-start', padding: '10px 14px' }}>
@@ -120,7 +126,7 @@ const Navbar = () => {
               </Link>
             )}
             <button onClick={handleLogout} style={{ ...linkStyle, background: 'rgba(255,255,255,0.1)', justifyContent: 'flex-start', border: 'none', cursor: 'pointer', padding: '10px 14px' }}>
-              🚪 התנתק
+              {s.logoutText || '🚪 התנתק'}
             </button>
           </div>
         )}

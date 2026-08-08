@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { productsAPI } from '../api/api';
 import { addToCart, addToast } from '../store/store';
+import { useEditMode } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
-const MIN = 3, MAX = 5;
 
 const BuildBox = () => {
   const [products, setProducts] = useState([]);
@@ -13,6 +13,11 @@ const BuildBox = () => {
   const [boxName, setBoxName] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { active, panelOpen, settings: liveS } = useEditMode() || {};
+  const s = liveS || {};
+  const MIN = Number(s.buildboxMin) || 3;
+  const MAX = Number(s.buildboxMax) || 5;
+  const DISCOUNT = Number(s.buildboxDiscount) || 10;
 
   useEffect(() => {
     productsAPI.getProducts({ limit: 100 }).then(r => {
@@ -41,7 +46,7 @@ const BuildBox = () => {
     const box = {
       id: Date.now(),
       name: boxName || `🎁 מארז אישי (${selected.length} מנות)`,
-      price: Math.round(totalPrice * 0.9),
+      price: Math.round(totalPrice * (1 - DISCOUNT / 100)),
       image: selected[0].image,
       category: 'מארזים',
       description: selected.map(p => p.name).join(', '),
@@ -53,16 +58,16 @@ const BuildBox = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
+    <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px', paddingTop: active ? '72px' : 0, paddingRight: active && panelOpen ? '340px' : '20px', transition: 'padding 0.3s' }}>
 
       <div style={{
         background: 'linear-gradient(135deg, #e8a87c, #8b3a1a)',
         borderRadius: '24px', padding: '36px', textAlign: 'center', marginBottom: '30px',
         boxShadow: '0 15px 35px rgba(139,58,26,0.25)'
       }}>
-        <h1 style={{ fontSize: '42px', color: 'white', fontWeight: 'bold', margin: 0 }}>🎁 הרכב מארז אישי</h1>
+        <h1 style={{ fontSize: '42px', color: 'white', fontWeight: 'bold', margin: 0 }}>{s.buildboxTitle || '🎁 הרכב מארז אישי'}</h1>
         <p style={{ color: 'rgba(255,255,255,0.9)', marginTop: '10px', fontSize: '16px' }}>
-          בחר {MIN}–{MAX} מנות וצור מארז קייטרינג מיוחד עם 10% הנחה!
+          {s.buildboxSubtitle || `בחר ${MIN}–${MAX} מנות וצור מארז קייטרינג מיוחד עם ${DISCOUNT}% הנחה!`}
         </p>
       </div>
 
@@ -110,7 +115,7 @@ const BuildBox = () => {
             </h2>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '13px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>שם המארז (אופציונלי)</label>
+              <label style={{ fontSize: '13px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>{s.buildboxNameLabel || 'שם המארז (אופציונלי)'}</label>
               <input value={boxName} onChange={e => setBoxName(e.target.value)}
                 placeholder="למשל: מארז ארוחת עסקים 🍽️"
                 style={{ width: '100%', padding: '10px', borderRadius: '12px', border: '2px solid #f0e0cc', fontSize: '14px', boxSizing: 'border-box' }}
@@ -120,7 +125,7 @@ const BuildBox = () => {
             <div style={{ marginBottom: '16px', minHeight: '80px' }}>
               {selected.length === 0 ? (
                 <p style={{ color: '#d1d5db', fontSize: '14px', textAlign: 'center', marginTop: '20px' }}>
-                  לחץ על מנות כדי להוסיף 🍽️
+                  {s.buildboxEmptyText || 'לחץ על מנות כדי להוסיף 🍽️'}
                 </p>
               ) : (
                 selected.map(p => (
@@ -138,12 +143,12 @@ const BuildBox = () => {
                 <span>₪{totalPrice}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#16a34a', marginBottom: '8px' }}>
-                <span>הנחת מארז 10%</span>
-                <span>-₪{Math.round(totalPrice * 0.1)}</span>
+                <span>הנחת מארז {DISCOUNT}%</span>
+                <span>-₪{Math.round(totalPrice * DISCOUNT / 100)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '20px' }}>
                 <span>סה"כ</span>
-                <span style={{ color: PRIMARY }}>₪{Math.round(totalPrice * 0.9)}</span>
+                <span style={{ color: PRIMARY }}>₪{Math.round(totalPrice * (1 - DISCOUNT / 100))}</span>
               </div>
             </div>
 
@@ -161,7 +166,7 @@ const BuildBox = () => {
               fontSize: '16px', fontWeight: 'bold',
               boxShadow: selected.length >= MIN ? '0 4px 16px rgba(200,98,42,0.4)' : 'none'
             }}>
-              🎁 הוסף מארז לסל
+              {s.buildboxBtn || '🎁 הוסף מארז לסל'}
             </button>
           </div>
         </div>

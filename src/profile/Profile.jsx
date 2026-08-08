@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { usersAPI } from '../api/api';
 import { updateUser, addToast } from '../store/store';
+import { useEditMode } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
 
@@ -30,6 +31,9 @@ const labelStyle = {
 const Profile = () => {
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
+  const { active, settings: liveS, panelOpen, editable } = useEditMode() || {};
+  const s = liveS || {};
+  const ed = editable || (() => ({}));
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -57,12 +61,12 @@ const Profile = () => {
   const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf6f0', padding: '40px 24px' }}>
+    <div style={{ minHeight: '100vh', background: '#fdf6f0', padding: '40px 24px', paddingTop: active ? '92px' : '40px', paddingRight: active && panelOpen ? '340px' : '24px', transition: 'padding-right 0.3s' }}>
       <div style={{ maxWidth: '700px', margin: '0 auto' }}>
 
         {/* כרטיס פרופיל עליון */}
         <div style={{
-          background: 'linear-gradient(135deg, #3b1a08 0%, #8b3a1a 50%, #c8622a 100%)',
+          background: `linear-gradient(135deg, ${s.profileBgFrom || '#3b1a08'} 0%, ${s.profileBgTo || '#c8622a'} 100%)`,
           borderRadius: '24px', padding: '40px', marginBottom: '28px',
           boxShadow: '0 15px 35px rgba(139,58,26,0.25)',
           display: 'flex', alignItems: 'center', gap: '24px',
@@ -99,8 +103,8 @@ const Profile = () => {
           background: 'white', borderRadius: '24px', padding: '36px',
           boxShadow: '0 4px 20px rgba(200,98,42,0.1)', border: '2px solid #f0e0cc',
         }}>
-          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#3b1a08', margin: '0 0 28px' }}>
-            עריכת פרטים
+          <h2 {...ed('profileEditTitle')} style={{ fontSize: '20px', fontWeight: '800', color: '#3b1a08', margin: '0 0 28px' }}>
+            {s.profileEditTitle || 'עריכת פרטים'}
           </h2>
 
           <Formik
@@ -163,7 +167,7 @@ const Profile = () => {
                     transition: 'all 0.2s',
                   }}
                 >
-                  {isSubmitting ? 'שומר...' : 'שמור שינויים'}
+                  {isSubmitting ? 'שומר...' : <span {...ed('profileSaveBtn')}>{s.profileSaveBtn || 'שמור שינויים'}</span>}
                 </button>
               </Form>
             )}

@@ -1,8 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../store/store';
 import { authAPI } from '../api/api';
 import { Link } from 'react-router-dom';
 import styles from './Register.module.css';
@@ -26,7 +24,6 @@ const validationSchema = Yup.object({
 const Register = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const dispatch = useDispatch();
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -35,7 +32,6 @@ const Register = () => {
       if (response.data.success) {
         setSuccess(true);
         setError('');
-        dispatch(loginUser(userData));
       }
     } catch (err) {
       setError(err.response?.data?.message || 'שגיאה בהרשמה');

@@ -5,6 +5,7 @@ import { productsAPI } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToast } from '../store/store';
+import { useEditMode } from '../admin/EditModeContext';
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -31,6 +32,8 @@ const AddProduct = () => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { settings: liveS } = useEditMode() || {};
+  const s = liveS || {};
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -78,7 +81,7 @@ const AddProduct = () => {
           marginTop: '10px',
           fontWeight: '300'
         }}>
-          הוסף מוצר חדש לחנות שלך
+          {s.addProductSubtitle || 'הוסף מוצר חדש לחנות שלך'}
         </p>
       </div>
       
@@ -289,7 +292,7 @@ const AddProduct = () => {
                   boxShadow: '0 4px 12px rgba(8, 145, 178, 0.3)'
                 }}
               >
-                {isSubmitting ? 'מוסיף...' : '➕ הוסף מוצר'}
+                {isSubmitting ? 'מוסיף...' : (s.addProductBtn || '➕ הוסף מוצר')}
               </button>
               
               <button

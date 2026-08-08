@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { reviewsAPI } from '../api/api';
 import { addToast } from '../store/store';
+import { useEditMode } from '../admin/EditModeContext';
 
 const PRIMARY = '#c8622a';
 
@@ -36,6 +37,8 @@ const StarRating = ({ value, onChange }) => {
 
 const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
   const dispatch = useDispatch();
+  const { settings: liveS } = useEditMode() || {};
+  const s = liveS || {};
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -63,7 +66,7 @@ const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
       }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '8px' }}>⭐</div>
-          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#3b1a08', margin: 0 }}>הוסף חוות דעת</h3>
+          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#3b1a08', margin: 0 }}>{s.reviewTitle || 'הוסף חוות דעת'}</h3>
         </div>
 
         <Formik initialValues={{ rating: 0, comment: '' }} validationSchema={validationSchema} onSubmit={handleSubmit}>
@@ -72,7 +75,7 @@ const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
 
               <div style={{ textAlign: 'center' }}>
                 <label style={{ fontSize: '14px', fontWeight: '600', color: '#6b3a1f', display: 'block', marginBottom: '8px' }}>
-                  הדירוג שלך
+                  {s.reviewRatingLabel || 'הדירוג שלך'}
                 </label>
                 <StarRating value={values.rating} onChange={v => setFieldValue('rating', v)} />
                 <ErrorMessage name="rating" component="div" style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }} />
@@ -80,11 +83,11 @@ const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
 
               <div>
                 <label style={{ fontSize: '14px', fontWeight: '600', color: '#6b3a1f', display: 'block', marginBottom: '6px' }}>
-                  חוות דעת
+                  {s.reviewCommentLabel || 'חוות דעת'}
                 </label>
                 <Field
                   as="textarea" name="comment" rows="4"
-                  placeholder="ספרי לנו על החוויה שלך..."
+                  placeholder={s.reviewPlaceholder || 'ספרי לנו על החוויה שלך...'}
                   style={{
                     width: '100%', padding: '12px 16px', border: '2px solid #e8d5c4',
                     borderRadius: '12px', fontSize: '14px', resize: 'vertical',
@@ -99,14 +102,14 @@ const AddReview = ({ productId, userId, onReviewAdded, onClose }) => {
                   flex: 1, padding: '12px', borderRadius: '12px',
                   border: '2px solid #e8d5c4', background: 'white',
                   color: '#6b3a1f', fontSize: '15px', fontWeight: '600', cursor: 'pointer',
-                }}>ביטול</button>
+                }}>{s.reviewCancelBtn || 'ביטול'}</button>
                 <button type="submit" disabled={isSubmitting} style={{
                   flex: 2, padding: '12px', borderRadius: '12px', border: 'none',
                   background: `linear-gradient(135deg, #e8a87c, ${PRIMARY})`,
                   color: 'white', fontSize: '15px', fontWeight: '700', cursor: 'pointer',
                   boxShadow: '0 4px 16px rgba(200,98,42,0.35)',
                 }}>
-                  {isSubmitting ? 'שולח...' : 'שלח חוות דעת ⭐'}
+                  {isSubmitting ? 'שולח...' : (s.reviewSubmitBtn || 'שלח חוות דעת ⭐')}
                 </button>
               </div>
             </Form>

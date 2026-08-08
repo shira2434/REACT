@@ -722,28 +722,236 @@
       "stock": 45,
       "sold": 180
     },
-    { "id": 80, "name": "סשי מיקס 8 יחידות", "category": "סושי", "price": 58, "description": "מבחר סשי טרי עם דג סלמון, טונה וירקות", "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop", "stock": 20, "sold": 95 },
-    { "id": 81, "name": "רולים קליפורניה 8 יחידות", "category": "סושי", "price": 52, "description": "רולים עם אבוקדו, מלפפון ורוטב ספיסי", "image": "https://tse2.mm.bing.net/th/id/OIP.lbEyU28l8-IM4jIyoZWUTAHaFj?rs=1&pid=ImgDetMain&o=7&rm=3", "stock": 18, "sold": 120 },
-    { "id": 82, "name": "סשימי סלמון", "category": "סושי", "price": 48, "description": "סשימי עם דג סלמון טרי, אורז וואסבי", "image": "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&h=300&fit=crop", "stock": 15, "sold": 80 },
-    { "id": 83, "name": "מאקי טונה 8 יחידות", "category": "סושי", "price": 46, "description": "מאקי עם טונה, מיונז ספיסי ומלפפון", "image": "https://tse3.mm.bing.net/th/id/OIP.XA-Gl9Yj0Ts7cOONRCQ_fAHaFm?rs=1&pid=ImgDetMain&o=7&rm=3", "stock": 22, "sold": 110 },
-    { "id": 84, "name": "פלטת סושי משפחתית", "category": "סושי", "price": 120, "description": "40 יחידות מגוון: סשימי, מאקי, רולים ונגירי", "image": "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&h=300&fit=crop", "stock": 10, "sold": 65 },
-    { "id": 85, "name": "נגירי סלמון 8 יחידות", "category": "סושי", "price": 54, "description": "נגירי עם דג סלמון, אבוקדו וצנונית", "image": "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=400&h=300&fit=crop", "stock": 16, "sold": 88 },
-    { "id": 86, "name": "פילה סלמון צלוי", "category": "דגים", "price": 78, "description": "פילה סלמון טרי צלוי עם לימון, שמן זית ועשבי תיבול", "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop", "stock": 15, "sold": 88 },
-    { "id": 87, "name": "דג בניר", "category": "דגים", "price": 72, "description": "פילה דג לבן בציפוי פריך עם רוטב טרטר ולימון", "image": "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=400&h=300&fit=crop", "stock": 18, "sold": 65 },
-
-{ "id": 88, "name": "פילה סלמון בחמאה ושום", "category": "דגים", "price": 85, "description": "נתחי פילה סלמון טריים צרובים בחמאת שום, לימון ועשבי תיבול", "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop", "stock": 12, "sold": 110 },    { "id": 89, "name": "טונה סטייק", "category": "דגים", "price": 88, "description": "סטייק טונה טרי צלוי medium-rare עם רוטב ספיסי", "image": "https://tse3.mm.bing.net/th/id/OIP.2o9bflZCxwN0we4BtS-ebAHaER?rs=1&pid=ImgDetMain&o=7&rm=3", "stock": 10, "sold": 55 },
-{ "id": 89, "name": "פילה דניס צרוב", "category": "דגים", "price": 92, "description": "פילה דניס טרי צרוב על המצלה עם שמן זית, עשבי תיבול ושום", "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop", "stock": 10, "sold": 85 },    { "id": 91, "name": "מרק דגים איטלקי", "category": "דגים", "price": 68, "description": "מרק עשיר עם מגוון פירות ים, עגבניות ועשבי תיבול", "image": "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop", "stock": 14, "sold": 72 },
-    { "id": 92, "name": "יין לבן - שרדונה", "category": "בר יין וקוקטיילים", "price": 38, "description": "כוס יין לבן שרדונה צרפתי, פירותי ורענן", "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=300&fit=crop", "stock": 50, "sold": 180 },
-    { "id": 93, "name": "יין אדום - קברנה", "category": "בר יין וקוקטיילים", "price": 42, "description": "כוס יין אדום קברנה סוביניון, עמוק ועשיר", "image": "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&h=300&fit=crop", "stock": 50, "sold": 155 },
-    { "id": 94, "name": "קוקטייל מוחיטו", "category": "בר יין וקוקטיילים", "price": 48, "description": "מוחיטו קלאסי עם רום, נענע, לימון וסודה", "image": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop", "stock": 40, "sold": 210 },
-    { "id": 95, "name": "ספריץ אפרול", "category": "בר יין וקוקטיילים", "price": 46, "description": "ספריץ איטלקי קלאסי עם אפרול, פרוסקו וסודה", "image": "https://images.unsplash.com/photo-1560508180-03f285f67ded?w=400&h=300&fit=crop", "stock": 45, "sold": 195 },
-    { "id": 96, "name": "קוקטייל מרגריטה", "category": "בר יין וקוקטיילים", "price": 52, "description": "מרגריטה קלאסית עם טקילה, ליים ומלח", "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop", "stock": 40, "sold": 175 },
-    { "id": 97, "name": "בקבוק יין לשולחן", "category": "בר יין וקוקטיילים", "price": 120, "description": "בקבוק יין לבחירה: לבן, אדום או רוזה", "image": "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&h=300&fit=crop", "stock": 30, "sold": 88 },
-    { "id": 98, "name": "מרק עגבניות ביתי", "category": "מרקים", "price": 38, "description": "מרק עגבניות טרי עם בזיליקום ושמנת, מוגש עם לחם", "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop", "stock": 25, "sold": 145 },
-    { "id": 99, "name": "מרק בצל צרפתי", "category": "מרקים", "price": 44, "description": "מרק בצל קלאסי עם גבינת גרויר מגורדת ולחם קלוי", "image": "https://happykitchen.co.il/wp-content/uploads/2023/11/%D7%9E%D7%A8%D7%A7-%D7%91%D7%A6%D7%9C-%D7%A8%D7%95%D7%97%D7%91-1-scaled.jpg", "stock": 20, "sold": 98 },
-    { "id": 100, "name": "מינסטרונה", "category": "מרקים", "price": 42, "description": "מרק ירקות איטלקי עשיר עם פסטה וגבינת פרמזן", "image": "https://i.pinimg.com/736x/17/5a/a3/175aa34c88610b1a072684e56061013f.jpg", "stock": 22, "sold": 112 },
-    { "id": 101, "name": "קרם דלעת", "category": "מרקים", "price": 40, "description": "מרק קרם דלעת חלק עם שמנת, ג'ינג'ר וזרעי דלעת", "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop", "stock": 24, "sold": 130 },
-    { "id": 102, "name": "מרק פטריות", "category": "מרקים", "price": 46, "description": "מרק קרם פטריות עשיר עם שמנת, שום ועשבי תיבול", "image": "https://sweetscent.co.il/wp-content/uploads/creamy-mushroom-soup-recipe-1-1024x590.jpeg", "stock": 20, "sold": 88 }
+    {
+      "id": 80,
+      "name": "סשי מיקס 8 יחידות",
+      "category": "סושי",
+      "price": 58,
+      "description": "מבחר סשי טרי עם דג סלמון, טונה וירקות",
+      "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop",
+      "stock": 20,
+      "sold": 95
+    },
+    {
+      "id": 81,
+      "name": "רולים קליפורניה 8 יחידות",
+      "category": "סושי",
+      "price": 52,
+      "description": "רולים עם אבוקדו, מלפפון ורוטב ספיסי",
+      "image": "https://tse2.mm.bing.net/th/id/OIP.lbEyU28l8-IM4jIyoZWUTAHaFj?rs=1&pid=ImgDetMain&o=7&rm=3",
+      "stock": 18,
+      "sold": 120
+    },
+    {
+      "id": 82,
+      "name": "סשימי סלמון",
+      "category": "סושי",
+      "price": 48,
+      "description": "סשימי עם דג סלמון טרי, אורז וואסבי",
+      "image": "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&h=300&fit=crop",
+      "stock": 15,
+      "sold": 80
+    },
+    {
+      "id": 83,
+      "name": "מאקי טונה 8 יחידות",
+      "category": "סושי",
+      "price": 46,
+      "description": "מאקי עם טונה, מיונז ספיסי ומלפפון",
+      "image": "https://tse3.mm.bing.net/th/id/OIP.XA-Gl9Yj0Ts7cOONRCQ_fAHaFm?rs=1&pid=ImgDetMain&o=7&rm=3",
+      "stock": 22,
+      "sold": 110
+    },
+    {
+      "id": 84,
+      "name": "פלטת סושי משפחתית",
+      "category": "סושי",
+      "price": 120,
+      "description": "40 יחידות מגוון: סשימי, מאקי, רולים ונגירי",
+      "image": "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&h=300&fit=crop",
+      "stock": 10,
+      "sold": 65
+    },
+    {
+      "id": 85,
+      "name": "נגירי סלמון 8 יחידות",
+      "category": "סושי",
+      "price": 54,
+      "description": "נגירי עם דג סלמון, אבוקדו וצנונית",
+      "image": "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=400&h=300&fit=crop",
+      "stock": 16,
+      "sold": 88
+    },
+    {
+      "id": 86,
+      "name": "פילה סלמון צלוי",
+      "category": "דגים",
+      "price": 78,
+      "description": "פילה סלמון טרי צלוי עם לימון, שמן זית ועשבי תיבול",
+      "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop",
+      "stock": 15,
+      "sold": 88
+    },
+    {
+      "id": 87,
+      "name": "דג בניר",
+      "category": "דגים",
+      "price": 72,
+      "description": "פילה דג לבן בציפוי פריך עם רוטב טרטר ולימון",
+      "image": "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=400&h=300&fit=crop",
+      "stock": 18,
+      "sold": 65
+    },
+    {
+      "id": 88,
+      "name": "פילה סלמון בחמאה ושום",
+      "category": "דגים",
+      "price": 85,
+      "description": "נתחי פילה סלמון טריים צרובים בחמאת שום, לימון ועשבי תיבול",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
+      "stock": 12,
+      "sold": 110
+    },
+    {
+      "id": 89,
+      "name": "טונה סטייק",
+      "category": "דגים",
+      "price": 88,
+      "description": "סטייק טונה טרי צלוי medium-rare עם רוטב ספיסי",
+      "image": "https://tse3.mm.bing.net/th/id/OIP.2o9bflZCxwN0we4BtS-ebAHaER?rs=1&pid=ImgDetMain&o=7&rm=3",
+      "stock": 10,
+      "sold": 55
+    },
+    {
+      "id": 89,
+      "name": "פילה דניס צרוב",
+      "category": "דגים",
+      "price": 92,
+      "description": "פילה דניס טרי צרוב על המצלה עם שמן זית, עשבי תיבול ושום",
+      "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop",
+      "stock": 10,
+      "sold": 85
+    },
+    {
+      "id": 91,
+      "name": "מרק דגים איטלקי",
+      "category": "דגים",
+      "price": 68,
+      "description": "מרק עשיר עם מגוון פירות ים, עגבניות ועשבי תיבול",
+      "image": "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop",
+      "stock": 14,
+      "sold": 72
+    },
+    {
+      "id": 92,
+      "name": "יין לבן - שרדונה",
+      "category": "בר יין וקוקטיילים",
+      "price": 38,
+      "description": "כוס יין לבן שרדונה צרפתי, פירותי ורענן",
+      "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=300&fit=crop",
+      "stock": 50,
+      "sold": 180
+    },
+    {
+      "id": 93,
+      "name": "יין אדום - קברנה",
+      "category": "בר יין וקוקטיילים",
+      "price": 42,
+      "description": "כוס יין אדום קברנה סוביניון, עמוק ועשיר",
+      "image": "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&h=300&fit=crop",
+      "stock": 50,
+      "sold": 155
+    },
+    {
+      "id": 94,
+      "name": "קוקטייל מוחיטו",
+      "category": "בר יין וקוקטיילים",
+      "price": 48,
+      "description": "מוחיטו קלאסי עם רום, נענע, לימון וסודה",
+      "image": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop",
+      "stock": 40,
+      "sold": 210
+    },
+    {
+      "id": 95,
+      "name": "ספריץ אפרול",
+      "category": "בר יין וקוקטיילים",
+      "price": 46,
+      "description": "ספריץ איטלקי קלאסי עם אפרול, פרוסקו וסודה",
+      "image": "https://images.unsplash.com/photo-1560508180-03f285f67ded?w=400&h=300&fit=crop",
+      "stock": 45,
+      "sold": 195
+    },
+    {
+      "id": 96,
+      "name": "קוקטייל מרגריטה",
+      "category": "בר יין וקוקטיילים",
+      "price": 52,
+      "description": "מרגריטה קלאסית עם טקילה, ליים ומלח",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop",
+      "stock": 40,
+      "sold": 175
+    },
+    {
+      "id": 97,
+      "name": "בקבוק יין לשולחן",
+      "category": "בר יין וקוקטיילים",
+      "price": 120,
+      "description": "בקבוק יין לבחירה: לבן, אדום או רוזה",
+      "image": "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&h=300&fit=crop",
+      "stock": 30,
+      "sold": 88
+    },
+    {
+      "id": 98,
+      "name": "מרק עגבניות ביתי",
+      "category": "מרקים",
+      "price": 38,
+      "description": "מרק עגבניות טרי עם בזיליקום ושמנת, מוגש עם לחם",
+      "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",
+      "stock": 25,
+      "sold": 145
+    },
+    {
+      "id": 99,
+      "name": "מרק בצל צרפתי",
+      "category": "מרקים",
+      "price": 44,
+      "description": "מרק בצל קלאסי עם גבינת גרויר מגורדת ולחם קלוי",
+      "image": "https://happykitchen.co.il/wp-content/uploads/2023/11/%D7%9E%D7%A8%D7%A7-%D7%91%D7%A6%D7%9C-%D7%A8%D7%95%D7%97%D7%91-1-scaled.jpg",
+      "stock": 20,
+      "sold": 98
+    },
+    {
+      "id": 100,
+      "name": "מינסטרונה",
+      "category": "מרקים",
+      "price": 42,
+      "description": "מרק ירקות איטלקי עשיר עם פסטה וגבינת פרמזן",
+      "image": "https://i.pinimg.com/736x/17/5a/a3/175aa34c88610b1a072684e56061013f.jpg",
+      "stock": 22,
+      "sold": 112
+    },
+    {
+      "id": 101,
+      "name": "קרם דלעת",
+      "category": "מרקים",
+      "price": 40,
+      "description": "מרק קרם דלעת חלק עם שמנת, ג'ינג'ר וזרעי דלעת",
+      "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop",
+      "stock": 24,
+      "sold": 130
+    },
+    {
+      "id": 102,
+      "name": "מרק פטריות",
+      "category": "מרקים",
+      "price": 46,
+      "description": "מרק קרם פטריות עשיר עם שמנת, שום ועשבי תיבול",
+      "image": "https://sweetscent.co.il/wp-content/uploads/creamy-mushroom-soup-recipe-1-1024x590.jpeg",
+      "stock": 20,
+      "sold": 88
+    }
   ],
   "reviews": [
     {
@@ -794,5 +1002,117 @@
       "userId": 3,
       "date": "2026-04-20"
     }
-  ]
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "פיצות",
+      "emoji": "🍕",
+      "desc": "פיצות איטלקיות אותנטיות",
+      "img": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&q=80",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "name": "פסטות",
+      "emoji": "🍝",
+      "desc": "פסטות איטלקיות קלאסיות",
+      "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&q=80",
+      "featured": true
+    },
+    {
+      "id": 3,
+      "name": "סושי",
+      "emoji": "🍣",
+      "desc": "סושי טרי ומגוון",
+      "img": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&q=80",
+      "featured": true
+    },
+    {
+      "id": 4,
+      "name": "דגים",
+      "emoji": "🐟",
+      "desc": "דגים טריים ומנות ים",
+      "img": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 5,
+      "name": "מנות גבינות",
+      "emoji": "🧀",
+      "desc": "גבינות מובחרות ומנות חלביות",
+      "img": "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 6,
+      "name": "בוקר ובראנץ'",
+      "emoji": "🥞",
+      "desc": "ארוחות בוקר עשירות",
+      "img": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 7,
+      "name": "סלטים",
+      "emoji": "🥗",
+      "desc": "סלטים טריים ומרעננים",
+      "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 8,
+      "name": "מרקים",
+      "emoji": "🍲",
+      "desc": "מרקים חמים וטעימים",
+      "img": "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 9,
+      "name": "כריכים ולחמים",
+      "emoji": "🥙",
+      "desc": "כריכים ביתיים ולחמים טריים",
+      "img": "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 10,
+      "name": "קינוחים",
+      "emoji": "🍰",
+      "desc": "קינוחים מפנקים ומתוקים",
+      "img": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 11,
+      "name": "בר יין וקוקטיילים",
+      "emoji": "🍷",
+      "desc": "יינות מובחרים וקוקטיילים",
+      "img": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80",
+      "featured": false
+    },
+    {
+      "id": 12,
+      "name": "שתייה",
+      "emoji": "☕",
+      "desc": "משקאות קרים וחמים",
+      "img": "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80",
+      "featured": false
+    }
+  ],
+  "settings": {
+    "heroTitle": "לה קוצ'ינה",
+    "heroSubtitle": "קייטרינג חלבי איטלקי • מנות טריות מדי יום",
+    "heroEmoji": "☕",
+    "primaryColor": "#c8622a",
+    "secondaryColor": "#3b1a08",
+    "accentColor": "#e8a87c",
+    "heroVideoId": "Lcyeu2hUOeY",
+    "categoriesTitle": "מה תרצה היום?",
+    "categoriesSubtitle": "בחר קטגוריה לצפייה במנות",
+    "heroTagline": "✨ בחר קטגוריה וגלה את התפריט שלנו!",
+    "heroBtnText": "צפה בכל התפריט →",
+    "catName_פיצות": ""
+  }
 }
